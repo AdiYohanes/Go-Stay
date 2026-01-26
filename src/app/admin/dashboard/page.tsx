@@ -1,13 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Building, CalendarDays, DollarSign, Users } from 'lucide-react'
-import { MOCK_PROPERTIES, MOCK_BOOKINGS } from '@/lib/mock-data'
+import { getProperties } from '@/actions/properties'
+import { getBookings } from '@/actions/bookings'
 
-export default function AdminDashboard() {
-  // In a real app, these stats would come from DB aggregation
-  const totalRevenue = MOCK_BOOKINGS.reduce((acc, b) => acc + b.total_price, 0)
-  const totalBookings = MOCK_BOOKINGS.length
-  const totalProperties = MOCK_PROPERTIES.length
-  const activeBookings = MOCK_BOOKINGS.filter(b => b.status === 'confirmed').length
+export default async function AdminDashboard() {
+  const [properties, bookings] = await Promise.all([
+    getProperties(),
+    getBookings()
+  ])
+
+  const totalRevenue = bookings.reduce((acc, b) => acc + b.total_price, 0)
+  const totalBookings = bookings.length
+  const totalProperties = properties.length
+  const activeBookings = bookings.filter(b => b.status === 'confirmed').length
 
   return (
     <div className="space-y-8">
@@ -63,17 +68,26 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {MOCK_BOOKINGS.map((booking) => (
-                <div key={booking.id} className="flex items-center">
-                  <div className="ml-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">{booking.property.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                       {new Date(booking.start_date).toLocaleDateString()} - {new Date(booking.end_date).toLocaleDateString()}
-                    </p>
+              {bookings.length === 0 ? (
+                <p className="text-muted-foreground text-sm">No bookings yet.</p>
+              ) : (
+                bookings.slice(0, 5).map((booking) => (
+                  <div key={booking.id} className="flex items-center">
+                    <div className="ml-4 space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {/* 
+                          // @ts-ignore: Supabase join typing is tricky without manual types 
+                        */}
+                        {booking.property?.title || 'Unknown Property'}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(booking.start_date).toLocaleDateString()} - {new Date(booking.end_date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="ml-auto font-medium">+${booking.total_price}</div>
                   </div>
-                  <div className="ml-auto font-medium">+${booking.total_price}</div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>

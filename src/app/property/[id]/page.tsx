@@ -1,20 +1,15 @@
 import { notFound } from 'next/navigation'
 import { MapPin, Users, Star } from 'lucide-react'
-import { MOCK_PROPERTIES } from '@/lib/mock-data'
 import { PropertyGallery } from '@/components/property/PropertyGallery'
 import { AmenitiesList } from '@/components/property/AmenitiesList'
 import { BookingWidget } from '@/components/booking/BookingWidget'
-
-// Simulate data fetching
-async function getProperty(id: string) {
-  // In real app: supabase.from('properties').select('*').eq('id', id).single()
-  return MOCK_PROPERTIES.find((p) => p.id === id) || null
-}
+import { MobileBookingFooter } from '@/components/booking/MobileBookingFooter'
+import { getPropertyById } from '@/actions/properties'
 
 export default async function PropertyPage({ params }: { params: Promise<{ id: string }> }) {
   // Await params for Next.js 15+
   const { id } = await params
-  const property = await getProperty(id)
+  const property = await getPropertyById(id)
 
   if (!property) {
     notFound()
@@ -65,6 +60,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ id: s
           </div>
         </div>
       </div>
+      <MobileBookingFooter property={property} />
     </div>
   )
 }

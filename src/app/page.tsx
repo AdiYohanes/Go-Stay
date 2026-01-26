@@ -1,27 +1,41 @@
-import { CategoryFilter } from '@/components/home/CategoryFilter'
 import { PropertyCard } from '@/components/property/PropertyCard'
-import { MOCK_PROPERTIES } from '@/lib/mock-data'
+import { getProperties } from '@/actions/properties'
+import { HeroBanner } from '@/components/home/HeroBanner'
 
-export default function Home() {
+export default async function Home() {
+  const properties = await getProperties()
+
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Categories Bar */}
-      <CategoryFilter />
+      {/* Hero Banner with Search */}
+      <HeroBanner />
       
+      {/* Spacer for overlapping search bar */}
+      <div className="h-16 md:h-20" />
+
       {/* Property Grid */}
-      <main className="flex-1 pb-20 pt-4">
-         <div className="container px-4 md:px-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
-              {MOCK_PROPERTIES.map((property) => (
-                <PropertyCard key={property.id} property={property} />
-              ))}
-              {/* Duplicate mock data to fill grid for visual check */}
-              {MOCK_PROPERTIES.map((property) => (
-                <PropertyCard key={`${property.id}-duplicate`} property={{...property, id: `${property.id}-duplicate`}} />
-              ))}
-              {MOCK_PROPERTIES.map((property) => (
-                <PropertyCard key={`${property.id}-triplicate`} property={{...property, id: `${property.id}-triplicate`}} />
-              ))}
+      <main className="flex-1 pt-8 md:pt-12">
+         <div className="w-full max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
+            {/* Section Header */}
+            <div className="mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                Temukan Penginapan Terbaik
+              </h2>
+              <p className="text-muted-foreground">
+                Pilihan akomodasi terpopuler untuk liburan impian Anda
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-6 gap-y-10">
+              {properties.length === 0 ? (
+                <div className="col-span-full h-40 flex items-center justify-center text-muted-foreground">
+                    No properties available.
+                </div>
+              ) : (
+                properties.map((property) => (
+                    <PropertyCard key={property.id} property={property} />
+                ))
+              )}
             </div>
          </div>
       </main>

@@ -5,7 +5,41 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Database } from '@/types/database.types'
 
+type Property = Database['public']['Tables']['properties']['Row']
 type PropertyInsert = Database['public']['Tables']['properties']['Insert']
+
+export async function getProperties(): Promise<Property[]> {
+  const supabase = await createClient()
+  
+  const { data: properties, error } = await supabase
+    .from('properties')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching properties:', error)
+    return []
+  }
+
+  return properties || []
+}
+
+export async function getPropertyById(id: string): Promise<Property | null> {
+  const supabase = await createClient()
+
+  const { data: property, error } = await supabase
+    .from('properties')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error('Error fetching property:', error)
+    return null
+  }
+
+  return property
+}
 
 export async function createProperty(formData: FormData) {
   const supabase = await createClient()
