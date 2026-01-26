@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 import { SearchBar } from './SearchBar'
 
@@ -58,9 +58,7 @@ export function HeroBanner() {
     setCurrentSlide((prev) => (prev + 1) % slides.length)
   }, [])
 
-  const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
-  }, [])
+
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index)
@@ -173,20 +171,7 @@ export function HeroBanner() {
         </div>
 
         {/* Navigation Arrows - Desktop only */}
-        <div className="hidden md:block">
-          <button 
-            onClick={prevSlide}
-            className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center transition-all duration-300 text-white hover:scale-110 active:scale-95"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button 
-            onClick={nextSlide}
-            className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center transition-all duration-300 text-white hover:scale-110 active:scale-95"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        </div>
+
 
         {/* Slide Indicators */}
         <div className="absolute bottom-28 md:bottom-36 left-1/2 -translate-x-1/2 flex gap-2 z-20">
