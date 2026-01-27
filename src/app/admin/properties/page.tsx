@@ -1,8 +1,8 @@
-import React from 'react'
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import React from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,11 +10,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { getProperties } from '@/actions/properties'
+} from "@/components/ui/table";
+import { getProperties } from "@/actions/properties";
 
 export default async function AdminPropertiesPage() {
-  const properties = await getProperties()
+  const result = await getProperties({ includeInactive: true });
+  const properties = result.success ? result.data.properties : [];
 
   return (
     <div className="space-y-8">
@@ -41,7 +42,10 @@ export default async function AdminPropertiesPage() {
           <TableBody>
             {properties.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
+                <TableCell
+                  colSpan={5}
+                  className="text-center h-24 text-muted-foreground"
+                >
                   No properties found.
                 </TableCell>
               </TableRow>
@@ -50,9 +54,9 @@ export default async function AdminPropertiesPage() {
                 <TableRow key={property.id}>
                   <TableCell>
                     {property.image_urls?.[0] ? (
-                      <img 
-                        src={property.image_urls[0]} 
-                        alt={property.title} 
+                      <img
+                        src={property.image_urls[0]}
+                        alt={property.title}
                         className="h-10 w-16 object-cover rounded-md"
                       />
                     ) : (
@@ -61,12 +65,16 @@ export default async function AdminPropertiesPage() {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="font-medium">{property.title}</TableCell>
+                  <TableCell className="font-medium">
+                    {property.title}
+                  </TableCell>
                   <TableCell>{property.location}</TableCell>
                   <TableCell>${property.price_per_night}/night</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/properties/${property.id}/edit`}>Edit</Link>
+                      <Link href={`/admin/properties/${property.id}/edit`}>
+                        Edit
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -76,5 +84,5 @@ export default async function AdminPropertiesPage() {
         </Table>
       </div>
     </div>
-  )
+  );
 }

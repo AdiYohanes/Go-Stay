@@ -14,22 +14,34 @@ export interface Database {
           id: string
           email: string
           full_name: string | null
+          avatar_url: string | null
+          phone: string | null
           role: 'user' | 'admin'
+          notification_preferences: Json
           created_at: string
+          updated_at: string
         }
         Insert: {
           id: string
           email: string
           full_name?: string | null
+          avatar_url?: string | null
+          phone?: string | null
           role?: 'user' | 'admin'
+          notification_preferences?: Json
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           email?: string
           full_name?: string | null
+          avatar_url?: string | null
+          phone?: string | null
           role?: 'user' | 'admin'
+          notification_preferences?: Json
           created_at?: string
+          updated_at?: string
         }
       }
       properties: {
@@ -39,9 +51,15 @@ export interface Database {
           description: string | null
           price_per_night: number
           location: string
+          latitude: number | null
+          longitude: number | null
           image_urls: string[]
           amenities: string[]
           max_guests: number
+          bedrooms: number
+          beds: number
+          bathrooms: number
+          is_active: boolean
           created_at: string
           updated_at: string
         }
@@ -51,9 +69,15 @@ export interface Database {
           description?: string | null
           price_per_night: number
           location: string
+          latitude?: number | null
+          longitude?: number | null
           image_urls?: string[]
           amenities?: string[]
           max_guests?: number
+          bedrooms?: number
+          beds?: number
+          bathrooms?: number
+          is_active?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -63,9 +87,15 @@ export interface Database {
           description?: string | null
           price_per_night?: number
           location?: string
+          latitude?: number | null
+          longitude?: number | null
           image_urls?: string[]
           amenities?: string[]
           max_guests?: number
+          bedrooms?: number
+          beds?: number
+          bathrooms?: number
+          is_active?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -77,9 +107,13 @@ export interface Database {
           user_id: string
           start_date: string
           end_date: string
+          guests: number
           total_price: number
-          status: 'pending' | 'confirmed' | 'cancelled'
+          service_fee: number
+          status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+          special_requests: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -87,9 +121,13 @@ export interface Database {
           user_id: string
           start_date: string
           end_date: string
+          guests?: number
           total_price: number
-          status?: 'pending' | 'confirmed' | 'cancelled'
+          service_fee?: number
+          status?: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+          special_requests?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -97,9 +135,13 @@ export interface Database {
           user_id?: string
           start_date?: string
           end_date?: string
+          guests?: number
           total_price?: number
-          status?: 'pending' | 'confirmed' | 'cancelled'
+          service_fee?: number
+          status?: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+          special_requests?: string | null
           created_at?: string
+          updated_at?: string
         }
       }
       reviews: {
@@ -125,6 +167,26 @@ export interface Database {
           user_id?: string
           rating?: number
           comment?: string | null
+          created_at?: string
+        }
+      }
+      favorites: {
+        Row: {
+          id: string
+          user_id: string
+          property_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          property_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          property_id?: string
           created_at?: string
         }
       }
