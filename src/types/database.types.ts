@@ -149,25 +149,31 @@ export interface Database {
           id: string
           property_id: string
           user_id: string
+          booking_id: string | null
           rating: number
           comment: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
           property_id: string
           user_id: string
+          booking_id?: string | null
           rating: number
           comment?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           property_id?: string
           user_id?: string
+          booking_id?: string | null
           rating?: number
           comment?: string | null
           created_at?: string
+          updated_at?: string
         }
       }
       favorites: {
@@ -187,6 +193,114 @@ export interface Database {
           id?: string
           user_id?: string
           property_id?: string
+          created_at?: string
+        }
+      }
+      cart_items: {
+        Row: {
+          id: string
+          user_id: string
+          property_id: string
+          start_date: string
+          end_date: string
+          guests: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          property_id: string
+          start_date: string
+          end_date: string
+          guests?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          property_id?: string
+          start_date?: string
+          end_date?: string
+          guests?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      payments: {
+        Row: {
+          id: string
+          booking_id: string
+          user_id: string
+          midtrans_order_id: string
+          midtrans_transaction_id: string | null
+          amount: number
+          status: string
+          payment_type: string | null
+          snap_token: string | null
+          snap_redirect_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          booking_id: string
+          user_id: string
+          midtrans_order_id: string
+          midtrans_transaction_id?: string | null
+          amount: number
+          status?: string
+          payment_type?: string | null
+          snap_token?: string | null
+          snap_redirect_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          booking_id?: string
+          user_id?: string
+          midtrans_order_id?: string
+          midtrans_transaction_id?: string | null
+          amount?: number
+          status?: string
+          payment_type?: string | null
+          snap_token?: string | null
+          snap_redirect_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: string
+          title: string
+          message: string
+          data: Json
+          read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: string
+          title: string
+          message: string
+          data?: Json
+          read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: string
+          title?: string
+          message?: string
+          data?: Json
+          read?: boolean
           created_at?: string
         }
       }

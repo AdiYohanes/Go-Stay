@@ -1,174 +1,299 @@
-'use client'
+"use client";
 
-import { useState, useCallback, useEffect } from 'react'
-import Image from 'next/image'
-import { cn } from '@/lib/utils'
-import { Grid, X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, X, Grid3x3 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+/**
+ * PropertyGallery component with lightbox modal
+ * Requirements: 1.6, 7.3
+ *
+ * Features:
+ * - Image grid with lightbox modal
+ * - Framer Motion entrance animations
+ * - Keyboard navigation in lightbox
+ * - Lazy load images for performance
+ */
 
 interface PropertyGalleryProps {
-  images: string[]
+  images: string[];
+  title: string;
+  className?: string;
 }
 
-export function PropertyGallery({ images }: PropertyGalleryProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+export function PropertyGallery({
+  images,
+  title,
+  className,
+}: PropertyGalleryProps) {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Demo images fallback with more variety
-  const allImages = images.length > 0 ? images : [
-    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1600', // Exterior
-    'https://images.unsplash.com/photo-1512918760383-edaefe0cb88e?auto=format&fit=crop&q=80&w=1600', // Pool
-    'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80&w=1600', // Living Room
-    'https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&q=80&w=1600', // Bedroom
-    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=1600', // Kitchen/Dining
-    'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=1600', // Bedroom 2
-    'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1600', // Bathroom
-    'https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&q=80&w=1600'  // Interior Detail
-  ]
-
-  const displayImages = allImages.slice(0, 5)
-
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index)
-    setIsOpen(true)
-  }
+  const handlePrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  }, [images.length]);
 
   const handleNext = useCallback(() => {
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
-  }, [allImages.length])
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  }, [images.length]);
 
-  const handlePrev = useCallback(() => {
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
-  }, [allImages.length])
+  const openLightbox = (index: number) => {
+    setCurrentIndex(index);
+    setLightboxOpen(true);
+  };
 
   // Keyboard navigation
   useEffect(() => {
-    if (!isOpen) return
+    if (!lightboxOpen) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') handleNext()
-      if (e.key === 'ArrowLeft') handlePrev()
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, handleNext, handlePrev])
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrevious();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        handleNext();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        setLightboxOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxOpen, handlePrevious, handleNext]);
+
+  // Use placeholder if no images
+  const displayImages =
+    images.length > 0
+      ? images
+      : [
+          "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1200",
+        ];
 
   return (
     <>
-      {/* Main Grid Gallery */}
-      <div className="relative rounded-2xl overflow-hidden shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 h-[300px] md:h-[400px] lg:h-[480px]">
-          
-          {/* Main Hero Image (Left Side) */}
-          <div 
-             className="relative h-full w-full group cursor-pointer overflow-hidden md:rounded-l-xl"
-             onClick={() => openLightbox(0)}
+      {/* Image Grid */}
+      <div className={cn("relative", className)}>
+        {displayImages.length === 1 ? (
+          // Single image layout
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative aspect-[16/9] overflow-hidden rounded-xl cursor-pointer group"
+            onClick={() => openLightbox(0)}
           >
             <Image
               src={displayImages[0]}
-              alt="Property Main View"
+              alt={`${title} - Image 1`}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 80vw, 1200px"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
               priority
             />
-            <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+          </motion.div>
+        ) : displayImages.length === 2 ? (
+          // Two images layout
+          <div className="grid grid-cols-2 gap-2">
+            {displayImages.map((image, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="relative aspect-[4/3] overflow-hidden rounded-xl cursor-pointer group"
+                onClick={() => openLightbox(index)}
+              >
+                <Image
+                  src={image}
+                  alt={`${title} - Image ${index + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1280px) 40vw, 600px"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  priority={index === 0}
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+              </motion.div>
+            ))}
           </div>
+        ) : (
+          // Grid layout for 3+ images
+          <div className="grid grid-cols-4 gap-2">
+            {/* Main large image */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="col-span-2 row-span-2 relative aspect-square overflow-hidden rounded-xl cursor-pointer group"
+              onClick={() => openLightbox(0)}
+            >
+              <Image
+                src={displayImages[0]}
+                alt={`${title} - Image 1`}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 600px"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                priority
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+            </motion.div>
 
-          {/* Right Side Grid (2x2) */}
-          <div className="hidden md:grid grid-cols-2 grid-rows-2 gap-2 h-full">
-              {displayImages.slice(1).map((img, idx) => (
-                  <div 
-                    key={idx} 
-                    className={cn(
-                        "relative h-full w-full group cursor-pointer overflow-hidden",
-                         // Rounded corners for the right side corners logic
-                         idx === 1 && "rounded-tr-xl",
-                         idx === 3 && "rounded-br-xl"
-                    )}
-                    onClick={() => openLightbox(idx + 1)}
-                  >
-                      <Image
-                          src={img}
-                          alt={`Property View ${idx + 2}`}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+            {/* Smaller images */}
+            {displayImages.slice(1, 5).map((image, index) => (
+              <motion.div
+                key={index + 1}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: (index + 1) * 0.1 }}
+                className="col-span-1 relative aspect-square overflow-hidden rounded-xl cursor-pointer group"
+                onClick={() => openLightbox(index + 1)}
+              >
+                <Image
+                  src={image}
+                  alt={`${title} - Image ${index + 2}`}
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 300px"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+
+                {/* Show all photos button on last visible image */}
+                {index === 3 && displayImages.length > 5 && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <Grid3x3 className="h-6 w-6 mx-auto mb-1" />
+                      <span className="text-sm font-medium">
+                        +{displayImages.length - 5} more
+                      </span>
+                    </div>
                   </div>
-              ))}
+                )}
+              </motion.div>
+            ))}
           </div>
-        </div>
-        
-        {/* 'Show all photos' Button */}
-        <div className="absolute bottom-4 right-4 z-10">
-          <Button 
-            variant="secondary" 
-            size="sm" 
-            className="gap-2 shadow-lg backdrop-blur-md bg-white/90 hover:bg-white border-black/5"
+        )}
+
+        {/* Show all photos button */}
+        {displayImages.length > 1 && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm hover:bg-white gap-2"
             onClick={() => openLightbox(0)}
           >
-              <Grid className="w-4 h-4" />
-              Show all photos
+            <Grid3x3 className="h-4 w-4" />
+            Show all photos
           </Button>
-        </div>
+        )}
       </div>
 
-      {/* Lightbox Dialog */ }
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-screen w-screen h-screen p-0 bg-black/95 border-none flex flex-col items-center justify-center focus:outline-none overflow-hidden duration-0">
-            <VisuallyHidden.Root>
-              <DialogTitle>Image Gallery</DialogTitle>
-            </VisuallyHidden.Root>
-            
-            {/* Close Button */}
-            <DialogClose className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors">
-                 <X className="w-8 h-8" />
-                 <span className="sr-only">Close</span>
+      {/* Lightbox Modal */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent
+          className="max-w-[95vw] max-h-[95vh] p-0 bg-black border-none"
+          showCloseButton={false}
+        >
+          <div className="relative w-full h-[95vh] flex items-center justify-center">
+            {/* Close button */}
+            <DialogClose asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white rounded-full"
+              >
+                <X className="h-5 w-5" />
+                <span className="sr-only">Close</span>
+              </Button>
             </DialogClose>
 
-            {/* Main Image Container */}
-            <div className="relative w-full h-full flex items-center justify-center">
-                <div className="relative w-full h-full">
-                   <Image 
-                      src={allImages[currentImageIndex]}
-                      alt={`View ${currentImageIndex + 1}`}
-                      fill
-                      className="object-contain"
-                      sizes="100vw"
-                      priority
-                      quality={100}
-                   />
+            {/* Image counter */}
+            <div className="absolute top-4 left-4 z-50 bg-black/50 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+              {currentIndex + 1} / {displayImages.length}
+            </div>
+
+            {/* Previous button */}
+            {displayImages.length > 1 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePrevious}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 hover:bg-black/70 text-white rounded-full h-12 w-12"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </Button>
+            )}
+
+            {/* Next button */}
+            {displayImages.length > 1 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleNext}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 hover:bg-black/70 text-white rounded-full h-12 w-12"
+                aria-label="Next image"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </Button>
+            )}
+
+            {/* Image display with animation */}
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={currentIndex}
+                src={displayImages[currentIndex]}
+                alt={`${title} - Image ${currentIndex + 1}`}
+                className="max-w-full max-h-full object-contain"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+              />
+            </AnimatePresence>
+
+            {/* Thumbnail strip */}
+            {displayImages.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 max-w-[90vw] overflow-x-auto">
+                <div className="flex gap-2 px-4">
+                  {displayImages.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentIndex(index)}
+                      className={cn(
+                        "relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
+                        index === currentIndex
+                          ? "border-white scale-110"
+                          : "border-transparent opacity-60 hover:opacity-100",
+                      )}
+                    >
+                      <Image
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        fill
+                        sizes="64px"
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
                 </div>
-            </div>
+              </div>
+            )}
 
-            {/* Navigation Buttons */}
-            <button 
-                onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-4 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-all hover:scale-105 outline-none"
-            >
-                <ChevronLeft className="w-10 h-10" />
-            </button>
-
-            <button 
-                onClick={(e) => { e.stopPropagation(); handleNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-4 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-all hover:scale-105 outline-none"
-            >
-                <ChevronRight className="w-10 h-10" />
-            </button>
-            
-            {/* Counter */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/90 font-medium text-lg tracking-wide bg-black/40 px-6 py-2 rounded-full backdrop-blur-sm border border-white/10">
-                {currentImageIndex + 1} / {allImages.length}
-            </div>
-
+            {/* Keyboard hints */}
+            {displayImages.length > 1 && (
+              <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-40 text-white/60 text-xs">
+                Use arrow keys to navigate
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

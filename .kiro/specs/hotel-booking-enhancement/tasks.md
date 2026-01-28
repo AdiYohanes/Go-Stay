@@ -254,21 +254,21 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Validate all items available before checkout
     - _Requirements: Cart system_
 
-- [ ] 13. Implement Midtrans payment gateway integration
-  - [ ] 13.1 Set up Midtrans configuration
+- [x] 13. Implement Midtrans payment gateway integration
+  - [x] 13.1 Set up Midtrans configuration
     - Create src/lib/midtrans.ts with Midtrans client configuration
     - Configure server key and client key from environment variables
     - Implement createTransaction function for Snap token
     - _Requirements: Payment gateway_
 
-  - [ ] 13.2 Create payment server actions
+  - [x] 13.2 Create payment server actions
     - Create src/actions/payment.ts with initiatePayment action
     - Implement createMidtransTransaction for cart checkout
     - Implement handlePaymentNotification for webhook
     - Implement getPaymentStatus action
     - _Requirements: Payment gateway_
 
-  - [ ] 13.3 Create checkout flow
+  - [x] 13.3 Create checkout flow
     - Create src/app/checkout/page.tsx with order summary
     - Integrate Midtrans Snap popup for payment
     - Handle payment success/failure/pending states
@@ -276,24 +276,24 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Clear cart after successful payment
     - _Requirements: Payment gateway_
 
-  - [ ] 13.4 Create payment webhook handler
+  - [x] 13.4 Create payment webhook handler
     - Create src/app/api/payment/notification/route.ts for Midtrans webhook
     - Verify webhook signature
     - Update payment and booking status based on notification
     - Send confirmation notifications
     - _Requirements: Payment gateway, 10.1_
 
-  - [ ] 13.5 Create payment status pages
+  - [x] 13.5 Create payment status pages
     - Create src/app/checkout/success/page.tsx with success animation
     - Create src/app/checkout/pending/page.tsx for pending payments
     - Create src/app/checkout/failed/page.tsx with retry option
     - _Requirements: Payment gateway_
 
-- [ ] 14. Checkpoint - Ensure cart and payment flow works
+- [x] 14. Checkpoint - Ensure cart and payment flow works
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 15. Implement search and filter functionality
-  - [ ] 15.1 Create search server action with filtering
+- [x] 15. Implement search and filter functionality
+  - [x] 15.1 Create search server action with filtering
     - Create src/actions/search.ts with searchProperties action
     - Implement location filter with partial text matching (case-insensitive)
     - Implement date range filter with availability check
@@ -302,7 +302,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement amenities filter (contains all selected)
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-  - [ ] 15.2 Implement search result sorting and pagination
+  - [x] 15.2 Implement search result sorting and pagination
     - Add sorting by price_asc, price_desc, rating, newest, relevance
     - Implement cursor-based pagination with page and limit
     - Return total count, totalPages, hasMore in results
@@ -314,8 +314,8 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - **Property 21: Pagination Correctness**
     - **Validates: Requirements 3.1-3.6, 9.3**
 
-- [ ] 16. Implement review system
-  - [ ] 16.1 Create review server actions
+- [x] 16. Implement review system
+  - [x] 16.1 Create review server actions
     - Create src/actions/review.ts with createReview action
     - Implement getPropertyReviews with user details
     - Implement updateReview action (preserves created_at)
@@ -323,7 +323,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement calculatePropertyRating utility
     - _Requirements: 6.1, 6.2, 6.3, 6.5_
 
-  - [ ] 16.2 Implement review eligibility checking
+  - [x] 16.2 Implement review eligibility checking
     - Create checkReviewEligibility function
     - Verify user has completed booking at property
     - Return appropriate error if ineligible
@@ -335,8 +335,8 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - **Property 19: Review Eligibility Check**
     - **Validates: Requirements 6.1, 6.3, 6.4, 6.5**
 
-- [ ] 17. Implement notification system
-  - [ ] 17.1 Create notification server actions
+- [x] 17. Implement notification system
+  - [x] 17.1 Create notification server actions
     - Create src/actions/notification.ts with createNotification action
     - Implement getUserNotifications with pagination
     - Implement markAsRead action
@@ -344,7 +344,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement getUnreadCount utility
     - _Requirements: 10.4, 10.5_
 
-  - [ ] 17.2 Create notification triggers for booking events
+  - [x] 17.2 Create notification triggers for booking events
     - Implement sendBookingConfirmation function
     - Implement sendBookingCancellation function (user + admin)
     - Implement sendBookingReminder function
@@ -356,11 +356,11 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - **Property 24: Notification Read Status Management**
     - **Validates: Requirements 10.1, 10.2, 10.4, 10.5**
 
-- [ ] 18. Checkpoint - Ensure search, review, notification tests pass
+- [x] 18. Checkpoint - Ensure search, review, notification tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 19. Implement admin dashboard server actions
-  - [ ] 19.1 Create admin dashboard data fetching actions
+- [x] 19. Implement admin dashboard server actions
+  - [x] 19.1 Create admin dashboard data fetching actions
     - Create src/actions/admin.ts with getDashboardMetrics action
     - Implement getAdminBookings with filtering (status, date range, property)
     - Implement getAdminProperties with pagination
@@ -368,7 +368,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement getAdminPayments for payment overview
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-  - [ ] 19.2 Implement analytics calculations
+  - [x] 19.2 Implement analytics calculations
     - Create getBookingTrends function (bookings over time)
     - Create getRevenueStats function (total, by period)
     - Create getOccupancyRates function
@@ -378,8 +378,8 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - **Property 16: Admin Dashboard Metrics Accuracy**
     - **Validates: Requirements 5.1, 5.5**
 
-- [ ] 20. Implement UI components - Property management
-  - [ ] 20.1 Create PropertyCard component with animations
+- [x] 20. Implement UI components - Property management
+  - [x] 20.1 Create PropertyCard component with animations
     - Create src/components/property/PropertyCard.tsx
     - Implement image carousel with Framer Motion transitions
     - Add hover scale and shadow animations
@@ -388,7 +388,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Add "Add to Cart" button with date/guest selection popover
     - _Requirements: 1.6, 7.2, 8.5_
 
-  - [ ] 20.2 Create PropertyForm component for admin
+  - [x] 20.2 Create PropertyForm component for admin
     - Create src/components/property/PropertyForm.tsx
     - Implement form fields for all property data
     - Add image upload with drag-and-drop
@@ -396,7 +396,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement form validation with error display
     - _Requirements: 1.1, 1.2, 1.5, 1.7_
 
-  - [ ] 20.3 Create PropertyGallery component
+  - [x] 20.3 Create PropertyGallery component
     - Create src/components/property/PropertyGallery.tsx
     - Implement image grid with lightbox modal
     - Add Framer Motion entrance animations
@@ -404,7 +404,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Lazy load images for performance
     - _Requirements: 1.6, 7.3_
 
-  - [ ] 20.4 Create PropertyDetails component
+  - [x] 20.4 Create PropertyDetails component
     - Create src/components/property/PropertyDetails.tsx
     - Display all property information with sections
     - Show amenities with icons
@@ -412,8 +412,8 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Include AvailabilityIndicator for selected dates
     - _Requirements: 1.6_
 
-- [ ] 21. Implement UI components - Booking and reservation
-  - [ ] 21.1 Create BookingWidget component (reusable reservation form)
+- [x] 21. Implement UI components - Booking and reservation
+  - [x] 21.1 Create BookingWidget component (reusable reservation form)
     - Create src/components/booking/BookingWidget.tsx
     - Implement date picker with calendar UI
     - Add guest selector with increment/decrement
@@ -423,7 +423,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement responsive layout (sidebar desktop, sticky footer mobile)
     - _Requirements: 2.1, 2.2, 2.3, 7.6, 8.6_
 
-  - [ ] 21.2 Create BookingCard component
+  - [x] 21.2 Create BookingCard component
     - Create src/components/booking/BookingCard.tsx
     - Display booking summary with property image
     - Show dates, guests, status with status badge
@@ -431,15 +431,15 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Show payment status
     - _Requirements: 2.5, 2.6_
 
-  - [ ] 21.3 Create BookingConfirmation component
+  - [x] 21.3 Create BookingConfirmation component
     - Create src/components/booking/BookingConfirmation.tsx
     - Display success animation with Framer Motion
     - Show booking details summary
     - Add navigation to bookings page
     - _Requirements: 2.4, 7.6_
 
-- [ ] 22. Implement UI components - Search and filter
-  - [ ] 22.1 Create SearchBar component with responsive variants
+- [x] 22. Implement UI components - Search and filter
+  - [x] 22.1 Create SearchBar component with responsive variants
     - Create src/components/search/SearchBar.tsx
     - Implement hero variant (expanded, prominent)
     - Implement compact variant (header, minimal)
@@ -447,7 +447,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Include location, date range, guest inputs
     - _Requirements: 3.1, 8.4_
 
-  - [ ] 22.2 Create SearchFilters component
+  - [x] 22.2 Create SearchFilters component
     - Create src/components/search/SearchFilters.tsx
     - Implement price range slider
     - Add amenity checkboxes
@@ -455,7 +455,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement mobile filter sheet
     - _Requirements: 3.4, 3.5, 3.6_
 
-  - [ ] 22.3 Create SearchResults component with animations
+  - [x] 22.3 Create SearchResults component with animations
     - Create src/components/search/SearchResults.tsx
     - Implement AnimatedList for staggered property cards
     - Add skeleton loaders during loading
@@ -463,18 +463,18 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Add pagination controls
     - _Requirements: 3.7, 7.1, 7.4_
 
-- [ ] 23. Checkpoint - Ensure UI components render correctly
+- [x] 23. Checkpoint - Ensure UI components render correctly
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 24. Implement UI components - Reviews and ratings
-  - [ ] 24.1 Create ReviewCard component
+- [x] 24. Implement UI components - Reviews and ratings
+  - [x] 24.1 Create ReviewCard component
     - Create src/components/review/ReviewCard.tsx
     - Display user avatar, name, date
     - Show star rating with visual stars
     - Display comment with read more for long text
     - _Requirements: 6.2_
 
-  - [ ] 24.2 Create ReviewForm component
+  - [x] 24.2 Create ReviewForm component
     - Create src/components/review/ReviewForm.tsx
     - Implement star rating selector with hover preview
     - Add comment textarea with character count
@@ -482,21 +482,21 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Add submit animation
     - _Requirements: 6.1, 7.6_
 
-  - [ ] 24.3 Create ReviewList component
+  - [x] 24.3 Create ReviewList component
     - Create src/components/review/ReviewList.tsx
     - Display average rating with distribution chart
     - List reviews with staggered animations
     - Add load more pagination
     - _Requirements: 6.2, 6.3, 7.1_
 
-- [ ] 25. Implement UI components - Notifications
-  - [ ] 25.1 Create NotificationBell component
+- [x] 25. Implement UI components - Notifications
+  - [x] 25.1 Create NotificationBell component
     - Create src/components/notification/NotificationBell.tsx
     - Display unread count badge with animation
     - Open dropdown/sheet on click
     - _Requirements: 10.4_
 
-  - [ ] 25.2 Create NotificationList component
+  - [x] 25.2 Create NotificationList component
     - Create src/components/notification/NotificationList.tsx
     - Display notifications with timestamps
     - Show read/unread visual distinction
@@ -504,15 +504,15 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement staggered entrance animations
     - _Requirements: 10.4, 10.5, 7.1_
 
-- [ ] 26. Implement animation utilities and components
-  - [ ] 26.1 Create animation wrapper components
+- [x] 26. Implement animation utilities and components
+  - [x] 26.1 Create animation wrapper components
     - Create src/components/ui/AnimatedList.tsx with stagger support
     - Create src/components/ui/FadeIn.tsx for fade entrance
     - Create src/components/ui/SlideIn.tsx for slide entrance
     - Create src/components/ui/ScaleIn.tsx for scale entrance
     - _Requirements: 7.1, 7.3_
 
-  - [ ] 26.2 Create loading state components
+  - [x] 26.2 Create loading state components
     - Create src/components/ui/Skeleton.tsx with shimmer animation
     - Create src/components/ui/PropertyCardSkeleton.tsx
     - Create src/components/ui/BookingWidgetSkeleton.tsx
@@ -523,20 +523,20 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - **Property 25: Loading State Display**
     - **Validates: Requirements 7.4, 7.6**
 
-  - [ ] 26.4 Create page transition wrapper
+  - [x] 26.4 Create page transition wrapper
     - Create src/components/ui/PageTransition.tsx
     - Implement fade and slide transitions between pages
     - Configure AnimatePresence for exit animations
     - _Requirements: 7.7_
 
-  - [ ] 26.5 Create scroll-based animation components
+  - [x] 26.5 Create scroll-based animation components
     - Create src/components/ui/ParallaxHero.tsx for hero sections
     - Create src/components/ui/RevealOnScroll.tsx for content sections
     - Use Framer Motion useScroll and useTransform hooks
     - _Requirements: 7.5_
 
-- [ ] 27. Implement responsive layout components
-  - [ ] 27.1 Create responsive navigation with cart
+- [x] 27. Implement responsive layout components
+  - [x] 27.1 Create responsive navigation with cart
     - Create src/components/layout/Header.tsx with responsive nav
     - Implement hamburger menu for mobile
     - Implement full navigation for desktop
@@ -544,7 +544,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Add CartBadge and NotificationBell to header
     - _Requirements: 8.7_
 
-  - [ ] 27.2 Create responsive property grid
+  - [x] 27.2 Create responsive property grid
     - Create src/components/layout/PropertyGrid.tsx
     - Implement responsive columns (1 mobile → 6 large desktop)
     - Use Tailwind responsive classes
@@ -554,31 +554,31 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - **Property 26: Responsive Grid Columns**
     - **Validates: Requirements 8.5**
 
-  - [ ] 27.4 Create responsive booking layout
+  - [x] 27.4 Create responsive booking layout
     - Create src/components/layout/BookingLayout.tsx
     - Implement sticky footer on mobile
     - Implement sidebar on desktop
     - _Requirements: 8.6_
 
-- [ ] 28. Checkpoint - Ensure animation and responsive tests pass
+- [x] 28. Checkpoint - Ensure animation and responsive tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 29. Implement customer-facing pages
-  - [ ] 29.1 Create home page with hero and featured properties
+- [x] 29. Implement customer-facing pages
+  - [x] 29.1 Create home page with hero and featured properties
     - Update src/app/page.tsx with ParallaxHero
     - Add SearchBar hero variant
     - Display featured properties with PropertyGrid
     - Add call-to-action sections
     - _Requirements: 3.1, 7.5_
 
-  - [ ] 29.2 Create property listing page
+  - [x] 29.2 Create property listing page
     - Create src/app/properties/page.tsx
     - Integrate SearchBar, SearchFilters, SearchResults
     - Implement URL-based filter state
     - Add page metadata
     - _Requirements: 3.1, 3.6, 3.7_
 
-  - [ ] 29.3 Create property detail page
+  - [x] 29.3 Create property detail page
     - Create src/app/properties/[id]/page.tsx
     - Integrate PropertyGallery, PropertyDetails, BookingWidget, ReviewList
     - Implement server-side data fetching
@@ -586,7 +586,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Include AvailabilityIndicator and Reserve button
     - _Requirements: 1.6, 2.1, 6.2_
 
-  - [ ] 29.4 Create customer profile page
+  - [x] 29.4 Create customer profile page
     - Create src/app/profile/page.tsx
     - Display user information with edit form
     - Show notification preferences toggles
@@ -594,7 +594,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Display account statistics (bookings count, reviews count)
     - _Requirements: 4.3_
 
-  - [ ] 29.5 Create customer bookings page
+  - [x] 29.5 Create customer bookings page
     - Create src/app/bookings/page.tsx
     - Display user's bookings with BookingCard components
     - Add filtering by status (upcoming, completed, cancelled)
@@ -602,7 +602,7 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Show payment status per booking
     - _Requirements: 2.5_
 
-  - [ ] 29.6 Create customer favorites page
+  - [x] 29.6 Create customer favorites page
     - Create src/app/favorites/page.tsx
     - Display favorited properties with PropertyGrid
     - Add remove from favorites option
@@ -610,8 +610,8 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Implement empty state with CTA to browse properties
     - _Requirements: Customer favorites feature_
 
-- [ ] 30. Implement admin dashboard pages
-  - [ ] 30.1 Create admin dashboard overview page
+- [x] 30. Implement admin dashboard pages
+  - [x] 30.1 Create admin dashboard overview page
     - Create src/app/admin/page.tsx
     - Display key metrics cards with animations
     - Show booking trends chart
@@ -619,21 +619,21 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Display recent bookings and payments
     - _Requirements: 5.1, 5.5_
 
-  - [ ] 30.2 Create admin property management page
+  - [x] 30.2 Create admin property management page
     - Create src/app/admin/properties/page.tsx
     - List all properties with edit/delete actions
     - Add create property button
     - Implement pagination
     - _Requirements: 5.4_
 
-  - [ ] 30.3 Create admin property form page
+  - [x] 30.3 Create admin property form page
     - Create src/app/admin/properties/new/page.tsx
     - Create src/app/admin/properties/[id]/edit/page.tsx
     - Integrate PropertyForm component
     - Handle create and update flows
     - _Requirements: 1.1, 1.3_
 
-  - [ ] 30.4 Create admin booking management page
+  - [x] 30.4 Create admin booking management page
     - Create src/app/admin/bookings/page.tsx
     - List all bookings with filters
     - Add status update functionality
@@ -641,15 +641,15 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - Show payment status
     - _Requirements: 5.2, 5.3_
 
-  - [ ] 30.5 Create admin payments page
+  - [x] 30.5 Create admin payments page
     - Create src/app/admin/payments/page.tsx
     - List all payments with status
     - Show payment details modal
     - Filter by status (success, pending, failed)
     - _Requirements: Payment gateway_
 
-- [ ] 31. Implement API input validation and error responses
-  - [ ] 31.1 Create API route handlers with validation
+- [x] 31. Implement API input validation and error responses
+  - [x] 31.1 Create API route handlers with validation
     - Create src/app/api/properties/route.ts with Zod validation
     - Create src/app/api/bookings/route.ts with Zod validation
     - Create src/app/api/reviews/route.ts with Zod validation
@@ -660,34 +660,34 @@ This implementation plan breaks down the hotel booking enhancement into discrete
     - **Property 20: API Input Validation**
     - **Validates: Requirements 9.1, 9.2**
 
-- [ ] 32. Implement ErrorBoundary and global error handling
-  - [ ] 32.1 Create ErrorBoundary component
+- [x] 32. Implement ErrorBoundary and global error handling
+  - [x] 32.1 Create ErrorBoundary component
     - Create src/components/ErrorBoundary.tsx
     - Implement error UI with retry button
     - Add error logging
     - _Requirements: 9.2_
 
-  - [ ] 32.2 Create error pages
+  - [x] 32.2 Create error pages
     - Create src/app/error.tsx for runtime errors
     - Create src/app/not-found.tsx for 404 errors
     - Style with consistent design
     - _Requirements: 9.2_
 
 - [ ] 33. Final integration and wiring
-  - [ ] 33.1 Wire up all components in pages
+  - [x] 33.1 Wire up all components in pages
     - Connect server actions to UI components
     - Implement optimistic updates where appropriate
     - Add loading states to all data fetching
     - _Requirements: 7.4, 7.6_
 
-  - [ ] 33.2 Implement global state with Zustand
+  - [x] 33.2 Implement global state with Zustand
     - Create src/store/auth-store.ts for auth state
     - Create src/store/search-store.ts for search filters
     - Create src/store/notification-store.ts for notification state
     - Update src/store/cart-store.ts with persistence
     - _Requirements: 4.7_
 
-  - [ ] 33.3 Add toast notifications for user feedback
+  - [x] 33.3 Add toast notifications for user feedback
     - Integrate sonner toast library
     - Add success toasts for CRUD operations
     - Add error toasts for failures

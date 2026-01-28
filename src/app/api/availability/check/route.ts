@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { checkAvailability } from '@/lib/availability';
+import { checkAvailability } from '@/lib/availability.server';
 import { z } from 'zod';
 
 const checkAvailabilitySchema = z.object({

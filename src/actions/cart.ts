@@ -17,7 +17,7 @@ import {
   UpdateCartItemInput,
 } from '@/types/cart.types';
 import { calculateBookingPrice } from '@/lib/price-calculator';
-import { checkAvailability } from '@/lib/availability';
+import { checkAvailability } from '@/lib/availability.server';
 import { Database } from '@/types/database.types';
 
 type CartItemRow = Database['public']['Tables']['cart_items']['Row'];
@@ -69,9 +69,10 @@ export async function addToCart(
       throw new Error('Property not found');
     }
 
-    if (input.guests > property.max_guests) {
+    const propertyData = property as unknown as { id: string; max_guests: number };
+    if (input.guests > propertyData.max_guests) {
       throw new Error(
-        `Guest count exceeds property maximum of ${property.max_guests}`
+        `Guest count exceeds property maximum of ${propertyData.max_guests}`
       );
     }
 
@@ -95,7 +96,7 @@ export async function addToCart(
         start_date: checkIn.toISOString().split('T')[0],
         end_date: checkOut.toISOString().split('T')[0],
         guests: input.guests,
-      })
+      } as any)
       .select()
       .single();
 
@@ -186,6 +187,8 @@ export async function updateCartItem(
       throw new Error('Cart item not found');
     }
 
+    const existingItemData = existingItem as unknown as { property_id: string; start_date: string; end_date: string };
+
     // Prepare update data
     const updateData: Partial<CartItemRow> = {};
 
@@ -211,16 +214,17 @@ export async function updateCartItem(
       const { data: property, error: propertyError } = await supabase
         .from('properties')
         .select('max_guests')
-        .eq('id', existingItem.property_id)
+        .eq('id', existingItemData.property_id)
         .single();
 
       if (propertyError || !property) {
         throw new Error('Property not found');
       }
 
-      if (input.guests > property.max_guests) {
+      const propertyData = property as unknown as { max_guests: number };
+      if (input.guests > propertyData.max_guests) {
         throw new Error(
-          `Guest count exceeds property maximum of ${property.max_guests}`
+          `Guest count exceeds property maximum of ${propertyData.max_guests}`
         );
       }
 
@@ -228,8 +232,8 @@ export async function updateCartItem(
     }
 
     // Validate dates
-    const finalStartDate = updateData.start_date || existingItem.start_date;
-    const finalEndDate = updateData.end_date || existingItem.end_date;
+    const finalStartDate = updateData.start_date || existingItemData.start_date;
+    const finalEndDate = updateData.end_date || existingItemData.end_date;
 
     const checkIn = new Date(finalStartDate);
     const checkOut = new Date(finalEndDate);
@@ -240,7 +244,7 @@ export async function updateCartItem(
 
     // Check availability for updated dates
     const availability = await checkAvailability(
-      existingItem.property_id,
+      existingItemData.property_id,
       checkIn,
       checkOut
     );
@@ -250,8 +254,8 @@ export async function updateCartItem(
     }
 
     // Update cart item
-    const { data: updatedItem, error: updateError } = await supabase
-      .from('cart_items')
+    const { data: updatedItem, error: updateError } = await (supabase
+      .from('cart_items') as any)
       .update(updateData)
       .eq('id', cartItemId)
       .eq('user_id', user.id)
@@ -328,9 +332,20 @@ export async function getCart(): Promise<ActionResult<Cart>> {
     // Process cart items with pricing and availability
     const itemsWithDetails: CartItemWithDetails[] = await Promise.all(
       cartItems.map(async (item) => {
-        const property = item.property as unknown as PropertyRow;
-        const startDate = new Date(item.start_date);
-        const endDate = new Date(item.end_date);
+        const itemData = item as unknown as {
+          id: string;
+          user_id: string;
+          property_id: string;
+          start_date: string;
+          end_date: string;
+          guests: number;
+          created_at: string;
+          updated_at: string;
+          property: PropertyRow;
+        };
+        const property = itemData.property;
+        const startDate = new Date(itemData.start_date);
+        const endDate = new Date(itemData.end_date);
 
         // Calculate pricing
         const pricing = calculateBookingPrice(
@@ -341,20 +356,20 @@ export async function getCart(): Promise<ActionResult<Cart>> {
 
         // Check availability
         const availability = await checkAvailability(
-          item.property_id,
+          itemData.property_id,
           startDate,
           endDate
         );
 
         return {
-          id: item.id,
-          user_id: item.user_id,
-          property_id: item.property_id,
-          check_in: item.start_date,
-          check_out: item.end_date,
-          guests: item.guests,
-          created_at: item.created_at,
-          updated_at: item.updated_at,
+          id: itemData.id,
+          user_id: itemData.user_id,
+          property_id: itemData.property_id,
+          check_in: itemData.start_date,
+          check_out: itemData.end_date,
+          guests: itemData.guests,
+          created_at: itemData.created_at,
+          updated_at: itemData.updated_at,
           property: {
             id: property.id,
             title: property.title,

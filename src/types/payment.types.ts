@@ -5,12 +5,12 @@
 
 export type PaymentStatus =
   | "pending"
-  | "capture"
-  | "settlement"
-  | "deny"
-  | "cancel"
-  | "expire"
-  | "refund";
+  | "processing"
+  | "success"
+  | "failed"
+  | "cancelled"
+  | "expired"
+  | "refunded";
 
 export interface PaymentIntent {
   id: string;
@@ -19,12 +19,17 @@ export interface PaymentIntent {
   midtrans_order_id: string;
   midtrans_transaction_id?: string | null;
   amount: number;
+  currency?: string;
   status: PaymentStatus;
-  payment_type?: string | null;
+  payment_method?: string | null;
+  payment_data?: Record<string, unknown>;
   snap_token?: string | null;
   snap_redirect_url?: string | null;
   created_at: string;
   updated_at: string;
+  paid_at?: string | null;
+  // Alias for backward compatibility
+  metadata?: Record<string, unknown>;
 }
 
 export interface CreatePaymentInput {

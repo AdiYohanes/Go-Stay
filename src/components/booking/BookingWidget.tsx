@@ -1,237 +1,361 @@
-'use client'
+/**
+ * BookingWidget component - Reusable reservation form
+ * Requirements: 2.1, 2.2, 2.3, 7.6, 8.6
+ * Responsive layout: sidebar on desktop, sticky footer on mobile
+ */
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Loader2, ChevronDown, Minus, Plus } from 'lucide-react'
-import { format, differenceInCalendarDays, addDays } from 'date-fns'
-import { DateRange } from 'react-day-picker'
-import { toast } from 'sonner'
+"use client";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Calendar } from '@/components/ui/calendar'
+import { useState, useEffect } from "react";
+import { Property } from "@/types/property.types";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
-import { Database } from '@/types/database.types'
-import { useAuthStore } from '@/store/authStore'
-import { createBooking } from '@/actions/bookings'
-
-type Property = Database['public']['Tables']['properties']['Row']
+} from "@/components/ui/popover";
+import { AvailabilityIndicator } from "./AvailabilityIndicator";
+import { calculateBookingPrice } from "@/lib/price-calculator";
+import { BookingPriceCalculation } from "@/types/booking.types";
+import { format } from "date-fns";
+import { CalendarIcon, MinusIcon, PlusIcon, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useCart } from "@/hooks/useCart";
+import { showAddedToCart, showValidationError } from "@/lib/toast-utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface BookingWidgetProps {
-  property: Property
+  property: Property;
+  onBookingComplete?: () => void;
+  className?: string;
 }
 
-export function BookingWidget({ property }: BookingWidgetProps) {
-  const [date, setDate] = useState<DateRange | undefined>()
-  const [guests, setGuests] = useState(1)
-  const [isBooking, setIsBooking] = useState(false)
-  
-  const { user } = useAuthStore()
-  const router = useRouter()
+/**
+ * Reusable booking widget with date picker, guest selector, and price breakdown
+ * Adds reservation to cart instead of direct booking
+ */
+export function BookingWidget({
+  property,
+  onBookingComplete,
+  className = "",
+}: BookingWidgetProps) {
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+  const [guests, setGuests] = useState(1);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [pricing, setPricing] = useState<BookingPriceCalculation | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
 
-  // Calculate nights and price
-  const nights = date?.from && date?.to 
-    ? differenceInCalendarDays(date.to, date.from) 
-    : 0
-  
-  const totalPrice = nights * property.price_per_night
-  const serviceFee = Math.round(totalPrice * 0.10) // 10% service fee
-  const grandTotal = totalPrice + serviceFee
+  const { addToCart: addItem } = useCart();
 
-  async function handleBooking() {
-    if (!user) {
-      toast.error('Please login to book this property')
-      router.push('/login?next=/property/' + property.id)
-      return
-    }
-
-    if (!date?.from || !date?.to) {
-      toast.error('Please select check-in and check-out dates')
-      return
-    }
-
-    setIsBooking(true)
-    const result = await createBooking(property.id, date.from, date.to, grandTotal)
-    setIsBooking(false)
-
-    if (result.error) {
-      toast.error(result.error)
+  // Calculate pricing when dates change
+  useEffect(() => {
+    if (startDate && endDate && endDate > startDate) {
+      const calculation = calculateBookingPrice(
+        property.price_per_night,
+        startDate,
+        endDate,
+      );
+      setPricing(calculation);
     } else {
-      toast.success('Booking confirmed!')
-      setDate(undefined)
-      router.refresh()
-      router.push('/my-bookings')
+      setPricing(null);
     }
-  }
+  }, [startDate, endDate, property.price_per_night]);
 
-  // Guest handling
-  const incrementGuests = () => setGuests(prev => Math.min(prev + 1, property.max_guests))
-  const decrementGuests = () => setGuests(prev => Math.max(prev - 1, 1))
+  const handleDateSelect = (range: { from?: Date; to?: Date } | undefined) => {
+    if (range?.from) {
+      setStartDate(range.from);
+      setEndDate(range.to);
+    }
+  };
+
+  const incrementGuests = () => {
+    if (guests < property.max_guests) {
+      setGuests(guests + 1);
+    }
+  };
+
+  const decrementGuests = () => {
+    if (guests > 1) {
+      setGuests(guests - 1);
+    }
+  };
+
+  const handleReserve = async () => {
+    if (!startDate || !endDate) {
+      showValidationError("Please select check-in and check-out dates");
+      return;
+    }
+
+    if (endDate <= startDate) {
+      showValidationError("Check-out date must be after check-in date");
+      return;
+    }
+
+    if (guests > property.max_guests) {
+      showValidationError(
+        `This property can accommodate a maximum of ${property.max_guests} guests`,
+      );
+      return;
+    }
+
+    setIsAdding(true);
+
+    try {
+      await addItem({
+        property_id: property.id,
+        check_in: startDate,
+        check_out: endDate,
+        guests,
+      });
+
+      showAddedToCart(property.title);
+
+      if (onBookingComplete) {
+        onBookingComplete();
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      // Error toast is handled by useCart hook
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  const isReserveDisabled =
+    !startDate || !endDate || endDate <= startDate || isAdding;
 
   return (
-    <Card className="shadow-xl border-border/40 rounded-2xl overflow-hidden sticky top-24">
-      <CardHeader className="p-6 pb-4">
-        <div className="flex items-baseline justify-between">
-          <div className="flex items-baseline gap-1">
-            <span className="font-bold text-2xl">${property.price_per_night}</span>
-            <span className="text-muted-foreground font-light">night</span>
-          </div>
-          <div className="flex items-center gap-1 text-sm text-foreground">
-             <span className="font-bold">★ 4.92</span>
-             <span className="text-muted-foreground">·</span>
-             <span className="text-muted-foreground underline decoration-muted-foreground/40 font-medium">128 reviews</span>
-          </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="p-6 pt-0">
-        <div className="space-y-4">
-          
-          {/* Booking Inputs Container */}
-          <div className="rounded-xl border border-input overflow-hidden divide-y divide-input">
-             {/* Dates Grid */}
-             <div className="grid grid-cols-2 divide-x divide-input">
-               <Popover>
-                  <PopoverTrigger asChild>
-                    <button className="p-3 text-left hover:bg-accent/50 transition-colors">
-                       <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Check-in</div>
-                       <div className={cn("text-sm truncate", !date?.from && "text-muted-foreground")}>
-                          {date?.from ? format(date.from, "M/d/yyyy") : "Add date"}
-                       </div>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={date?.from}
-                      selected={date}
-                      onSelect={setDate}
-                      numberOfMonths={2}
-                      disabled={(date) => date < new Date() || date > addDays(new Date(), 365)}
-                    />
-                  </PopoverContent>
-                </Popover>
-
-                <Popover>
-                   <PopoverTrigger asChild>
-                    <button className="p-3 text-left hover:bg-accent/50 transition-colors">
-                       <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Check-out</div>
-                       <div className={cn("text-sm truncate", !date?.to && "text-muted-foreground")}>
-                          {date?.to ? format(date.to, "M/d/yyyy") : "Add date"}
-                       </div>
-                    </button>
-                   </PopoverTrigger>
-                   <PopoverContent className="w-auto p-0" align="end">
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={date?.from}
-                      selected={date}
-                      onSelect={setDate}
-                      numberOfMonths={2}
-                      disabled={(date) => date < new Date() || date > addDays(new Date(), 365)}
-                    />
-                  </PopoverContent>
-                </Popover>
-             </div>
-
-             {/* Guests Dropdown */}
-             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="w-full p-3 text-left hover:bg-accent/50 transition-colors flex justify-between items-center group">
-                     <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Guests</div>
-                        <div className="text-sm">{guests} guest{guests > 1 ? 's' : ''}</div>
-                     </div>
-                     <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[300px] p-4" align="end">
-                   <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                         <div className="font-medium text-sm">Guests</div>
-                         <div className="text-muted-foreground text-xs">Ages 13 or above</div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                         <Button 
-                            variant="outline" 
-                            size="icon" 
-                            className="h-8 w-8 rounded-full border-input"
-                            onClick={decrementGuests}
-                            disabled={guests <= 1}
-                         >
-                            <Minus className="h-3 w-3" />
-                         </Button>
-                         <span className="w-4 text-center text-sm">{guests}</span>
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            className="h-8 w-8 rounded-full border-input"
-                            onClick={incrementGuests}
-                            disabled={guests >= property.max_guests}
-                         >
-                            <Plus className="h-3 w-3" />
-                         </Button>
-                      </div>
-                   </div>
-                   <div className="mt-4 text-xs text-muted-foreground">
-                      This property has a maximum capacity of {property.max_guests} guests.
-                   </div>
-                </DropdownMenuContent>
-             </DropdownMenu>
-          </div>
-
-          <Button 
-            className="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-semibold text-lg py-6 transition-all shadow-md hover:shadow-lg" 
-            size="lg" 
-            onClick={handleBooking} 
-            disabled={isBooking}
-          >
-            {isBooking ? (
-               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-                nights > 0 ? 'Reserve' : 'Check availability'
-            )}
-          </Button>
-
-          {nights === 0 && (
-             <div className="text-center text-sm text-muted-foreground font-light pt-2">
-                You won't be charged yet
-             </div>
-          )}
-
-          {nights > 0 && (
-            <div className="space-y-4 pt-4">
-               <div className="space-y-3 pb-4 border-b border-border">
-                  <div className="flex justify-between text-base text-foreground/80 font-light">
-                     <span className="underline decoration-muted-foreground/40">${property.price_per_night} x {nights} nights</span>
-                     <span>${totalPrice}</span>
-                  </div>
-                  <div className="flex justify-between text-base text-foreground/80 font-light">
-                     <span className="underline decoration-muted-foreground/40">Service fee</span>
-                     <span>${serviceFee}</span>
-                  </div>
-               </div>
-               <div className="flex justify-between text-lg font-semibold pt-2">
-                  <span>Total</span>
-                  <span>${grandTotal}</span>
-               </div>
+    <div className={cn("w-full", className)}>
+      {/* Desktop: Sidebar layout */}
+      <div className="hidden lg:block">
+        <div className="border rounded-lg p-6 shadow-lg sticky top-24">
+          <div className="space-y-6">
+            {/* Price header */}
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold">
+                ${property.price_per_night}
+              </span>
+              <span className="text-muted-foreground">/ night</span>
             </div>
-          )}
+
+            {/* Date picker */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Dates</label>
+              <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !startDate && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDate && endDate ? (
+                      <>
+                        {format(startDate, "MMM d")} -{" "}
+                        {format(endDate, "MMM d, yyyy")}
+                      </>
+                    ) : (
+                      <span>Select dates</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="range"
+                    selected={{ from: startDate, to: endDate }}
+                    onSelect={handleDateSelect}
+                    numberOfMonths={2}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* Guest selector */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Guests</label>
+              <div className="flex items-center justify-between border rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">
+                    {guests} {guests === 1 ? "guest" : "guests"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={decrementGuests}
+                    disabled={guests <= 1}
+                  >
+                    <MinusIcon className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={incrementGuests}
+                    disabled={guests >= property.max_guests}
+                  >
+                    <PlusIcon className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Maximum {property.max_guests} guests
+              </p>
+            </div>
+
+            {/* Availability indicator */}
+            {startDate && endDate && (
+              <AvailabilityIndicator
+                propertyId={property.id}
+                startDate={startDate}
+                endDate={endDate}
+                showConflictingDates={true}
+              />
+            )}
+
+            {/* Reserve button */}
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={handleReserve}
+              disabled={isReserveDisabled}
+            >
+              {isAdding ? "Adding to cart..." : "Reserve"}
+            </Button>
+
+            {/* Price breakdown with animation */}
+            <AnimatePresence mode="wait">
+              {pricing && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-3 pt-4 border-t"
+                >
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      ${property.price_per_night} × {pricing.nights}{" "}
+                      {pricing.nights === 1 ? "night" : "nights"}
+                    </span>
+                    <span>${pricing.subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Service fee</span>
+                    <span>${pricing.service_fee.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between font-semibold pt-3 border-t">
+                    <span>Total</span>
+                    <span>${pricing.total.toFixed(2)}</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-      </CardContent>
-    </Card>
-  )
+      </div>
+
+      {/* Mobile: Sticky footer */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50">
+        <div className="p-4 space-y-3">
+          {/* Compact date and guest selector */}
+          <div className="grid grid-cols-2 gap-2">
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-3 w-3" />
+                  {startDate && endDate ? (
+                    <span className="text-xs truncate">
+                      {format(startDate, "MMM d")} - {format(endDate, "MMM d")}
+                    </span>
+                  ) : (
+                    <span className="text-xs">Dates</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="center">
+                <Calendar
+                  mode="range"
+                  selected={{ from: startDate, to: endDate }}
+                  onSelect={handleDateSelect}
+                  numberOfMonths={1}
+                  disabled={(date) => date < new Date()}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+
+            <div className="flex items-center justify-between border rounded-lg px-2">
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={decrementGuests}
+                disabled={guests <= 1}
+              >
+                <MinusIcon className="h-3 w-3" />
+              </Button>
+              <span className="text-xs font-medium">
+                {guests} {guests === 1 ? "guest" : "guests"}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={incrementGuests}
+                disabled={guests >= property.max_guests}
+              >
+                <PlusIcon className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Availability indicator (compact) */}
+          {startDate && endDate && (
+            <AvailabilityIndicator
+              propertyId={property.id}
+              startDate={startDate}
+              endDate={endDate}
+              variant="compact"
+              showConflictingDates={false}
+            />
+          )}
+
+          {/* Price and reserve button */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col">
+              <div className="flex items-baseline gap-1">
+                <span className="text-lg font-bold">
+                  ${property.price_per_night}
+                </span>
+                <span className="text-xs text-muted-foreground">/ night</span>
+              </div>
+              {pricing && (
+                <span className="text-xs text-muted-foreground">
+                  Total: ${pricing.total.toFixed(2)}
+                </span>
+              )}
+            </div>
+            <Button
+              size="lg"
+              onClick={handleReserve}
+              disabled={isReserveDisabled}
+              className="flex-1"
+            >
+              {isAdding ? "Adding..." : "Reserve"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

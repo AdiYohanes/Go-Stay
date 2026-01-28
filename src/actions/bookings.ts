@@ -19,9 +19,10 @@ import {
   BookingStatus 
 } from '@/types/booking.types';
 import { calculateBookingPrice } from '@/lib/price-calculator';
-import { checkAvailability } from '@/lib/availability';
+import { checkAvailability } from '@/lib/availability.server';
 import { NotFoundError, ConflictError, AuthenticationError } from '@/lib/errors';
 import { Database } from '@/types/database.types';
+import { sendBookingConfirmation, sendBookingCancellation } from './notification';
 
 type BookingInsert = Database['public']['Tables']['bookings']['Insert'];
 type BookingUpdate = Database['public']['Tables']['bookings']['Update'];
@@ -49,7 +50,7 @@ export async function createBooking(
     // Get property details
     const { data: property, error: propertyError } = await supabase
       .from('properties')
-      .select('id, price_per_night, max_guests, is_active')
+      .select('id, title, price_per_night, max_guests, is_active')
       .eq('id', validated.property_id)
       .single();
 
@@ -60,6 +61,7 @@ export async function createBooking(
     // Type assertion for property fields
     const propertyData = property as {
       id: string;
+      title: string;
       price_per_night: number;
       max_guests: number;
       is_active: boolean;
@@ -121,7 +123,19 @@ export async function createBooking(
       throw new Error('Failed to create booking');
     }
 
-    return booking as Booking;
+    // Type assertion for booking data
+    const bookingData = booking as Booking;
+
+    // Send booking confirmation notification
+    await sendBookingConfirmation(
+      user.id,
+      bookingData.id,
+      propertyData.title || 'Property',
+      bookingData.start_date,
+      bookingData.end_date
+    );
+
+    return bookingData;
   });
 }
 
@@ -232,6 +246,61 @@ export async function getUserBookings(): Promise<ActionResult<BookingWithDetails
 }
 
 /**
+ * Retrieves all bookings (admin only)
+ * @returns ActionResult with array of all bookings with details
+ */
+export async function getBookings(): Promise<ActionResult<BookingWithDetails[]>> {
+  return safeAction(async () => {
+    const supabase = await createClient();
+
+    // Get current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      throw new AuthenticationError('You must be logged in to view bookings');
+    }
+
+    // Check if user is admin
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    const userRole = (profile as unknown as { role?: string })?.role;
+    if (userRole !== 'admin') {
+      throw new AuthenticationError('Admin access required');
+    }
+
+    // Get all bookings with property and user details
+    const { data: bookings, error: bookingsError } = await supabase
+      .from('bookings')
+      .select(`
+        *,
+        property:properties (
+          id,
+          title,
+          location,
+          image_urls,
+          price_per_night
+        ),
+        user:profiles (
+          id,
+          email,
+          full_name
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (bookingsError) {
+      console.error('Error fetching bookings:', bookingsError);
+      throw new Error('Failed to fetch bookings');
+    }
+
+    return (bookings || []) as unknown as BookingWithDetails[];
+  });
+}
+
+/**
  * Updates the status of a booking
  * @param bookingId The booking ID
  * @param status The new status
@@ -315,7 +384,15 @@ export async function cancelBooking(
     // Get the booking to verify ownership
     const { data: existingBooking, error: fetchError } = await supabase
       .from('bookings')
-      .select('user_id, status')
+      .select(`
+        user_id, 
+        status,
+        start_date,
+        end_date,
+        property:properties (
+          title
+        )
+      `)
       .eq('id', validated.booking_id)
       .single();
 
@@ -327,6 +404,9 @@ export async function cancelBooking(
     const bookingData = existingBooking as {
       user_id: string;
       status: BookingStatus;
+      start_date: string;
+      end_date: string;
+      property: { title: string };
     };
 
     // Check if user owns this booking
@@ -361,6 +441,15 @@ export async function cancelBooking(
       console.error('Error cancelling booking:', cancelError);
       throw new Error('Failed to cancel booking');
     }
+
+    // Send cancellation notifications to user and admins
+    await sendBookingCancellation(
+      user.id,
+      validated.booking_id,
+      bookingData.property.title || 'Property',
+      bookingData.start_date,
+      bookingData.end_date
+    );
 
     return booking as Booking;
   });
