@@ -33,7 +33,14 @@ export async function safeAction<T>(
         details: error.details as Record<string, string[]>,
       };
     }
-    console.error("Unexpected error:", error);
+    // Pass through error message from regular Error objects
+    if (error instanceof Error) {
+      return {
+        success: false,
+        error: error.message,
+        code: "ERROR",
+      };
+    }
     return {
       success: false,
       error: "An unexpected error occurred",

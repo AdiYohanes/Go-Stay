@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -47,11 +47,18 @@ function LoginForm() {
     },
   });
 
-  // Show error from OAuth callback if present
+  // Show messages from URL params (e.g., after registration)
   useEffect(() => {
     const error = searchParams.get("error");
+    const message = searchParams.get("message");
+
     if (error) {
       toast.error(decodeURIComponent(error));
+    }
+    if (message) {
+      toast.success(decodeURIComponent(message), {
+        icon: <CheckCircle2 className="h-5 w-5 text-green-500" />,
+      });
     }
   }, [searchParams]);
 
@@ -61,13 +68,33 @@ function LoginForm() {
     const result = await signInWithEmail(values.email, values.password);
 
     if (result.success) {
-      toast.success("Signed in successfully");
+      toast.success("Berhasil masuk! 🎉");
       router.push("/");
       router.refresh();
     } else {
-      toast.error(result.error || "Failed to sign in");
+      // Show specific error messages
+      const errorMessage = result.error || "Gagal masuk";
+      toast.error(errorMessage, {
+        description: getErrorDescription(errorMessage),
+      });
       setIsLoading(false);
     }
+  }
+
+  function getErrorDescription(error: string): string | undefined {
+    if (
+      error.toLowerCase().includes("invalid credentials") ||
+      error.toLowerCase().includes("invalid login")
+    ) {
+      return "Email atau password salah. Silakan coba lagi.";
+    }
+    if (error.toLowerCase().includes("email not confirmed")) {
+      return "Silakan konfirmasi email Anda terlebih dahulu.";
+    }
+    if (error.toLowerCase().includes("rate limit")) {
+      return "Terlalu banyak percobaan. Tunggu beberapa menit.";
+    }
+    return undefined;
   }
 
   async function handleGoogleSignIn() {
@@ -76,12 +103,11 @@ function LoginForm() {
     const result = await signInWithGoogle();
 
     if (result.success && result.data) {
-      // Redirect to Google OAuth
       window.location.href = result.data.url;
     } else {
       const errorMessage = !result.success
         ? result.error
-        : "Failed to sign in with Google";
+        : "Gagal masuk dengan Google";
       toast.error(errorMessage);
       setIsGoogleLoading(false);
     }
@@ -92,10 +118,10 @@ function LoginForm() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold tracking-tight">
-            Sign in
+            Masuk ke Akun
           </CardTitle>
           <CardDescription>
-            Enter your email and password to access your account
+            Masukkan email dan password untuk mengakses akun Anda
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -127,7 +153,7 @@ function LoginForm() {
                 />
               </svg>
             )}
-            Continue with Google
+            Lanjutkan dengan Google
           </Button>
 
           <div className="relative">
@@ -136,7 +162,7 @@ function LoginForm() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
+                Atau masuk dengan email
               </span>
             </div>
           </div>
@@ -150,7 +176,7 @@ function LoginForm() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="name@example.com" {...field} />
+                      <Input placeholder="nama@email.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -163,7 +189,11 @@ function LoginForm() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="Masukkan password"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,7 +204,7 @@ function LoginForm() {
                   href="/forgot-password"
                   className="text-sm text-primary underline-offset-4 hover:underline"
                 >
-                  Forgot password?
+                  Lupa password?
                 </Link>
               </div>
               <Button
@@ -183,19 +213,19 @@ function LoginForm() {
                 disabled={isLoading || isGoogleLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Sign In
+                Masuk
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-2 text-sm text-muted-foreground">
           <div>
-            Don&apos;t have an account?{" "}
+            Belum punya akun?{" "}
             <Link
               href="/register"
-              className="text-primary underline-offset-4 hover:underline"
+              className="text-primary underline-offset-4 hover:underline font-medium"
             >
-              Sign up
+              Daftar sekarang
             </Link>
           </div>
         </CardFooter>
