@@ -3,7 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X, Grid3x3 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -199,6 +204,9 @@ export function PropertyGallery({
           className="max-w-[95vw] max-h-[95vh] p-0 bg-black border-none"
           showCloseButton={false}
         >
+          {/* Hidden title for accessibility */}
+          <DialogTitle className="sr-only">{title} - Image Gallery</DialogTitle>
+
           <div className="relative w-full h-[95vh] flex items-center justify-center">
             {/* Close button */}
             <DialogClose asChild>

@@ -5,6 +5,7 @@ import { safeAction, ActionResult } from '@/lib/action-utils';
 import { AuthenticationError } from '@/lib/errors';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { Database } from '@/types/database.types';
 
 /**
  * Profile management server actions
@@ -48,10 +49,19 @@ export async function updateProfile(
     // Validate input
     const validatedData = updateProfileSchema.parse(data);
 
-    // Update profile
-    const { error } = await supabase
+    // Update profile with explicit typing from Database
+    const updateData: Database['public']['Tables']['profiles']['Update'] = {};
+    if (validatedData.full_name !== undefined) {
+      updateData.full_name = validatedData.full_name;
+    }
+    if (validatedData.phone !== undefined) {
+      updateData.phone = validatedData.phone;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any)
       .from('profiles')
-      .update(validatedData)
+      .update(updateData)
       .eq('id', user.id);
 
     if (error) {
@@ -85,7 +95,8 @@ export async function updateNotificationPreferences(
     const validatedPreferences = updateNotificationPreferencesSchema.parse(preferences);
 
     // Update notification preferences
-    const { error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any)
       .from('profiles')
       .update({ notification_preferences: validatedPreferences })
       .eq('id', user.id);

@@ -167,8 +167,7 @@ export async function createMidtransTransaction(): Promise<ActionResult<PaymentI
           location,
           image_urls,
           price_per_night,
-          max_guests,
-          is_active
+          max_guests
         )
       `
       )

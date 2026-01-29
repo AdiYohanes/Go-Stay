@@ -289,7 +289,17 @@ export async function getCart(): Promise<ActionResult<Cart>> {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      throw new Error('Authentication required');
+      // Return empty cart if user not authenticated
+      return {
+        items: [],
+        summary: {
+          itemCount: 0,
+          subtotal: 0,
+          totalServiceFee: 0,
+          total: 0,
+          allAvailable: true,
+        },
+      };
     }
 
     // Get cart items with property details

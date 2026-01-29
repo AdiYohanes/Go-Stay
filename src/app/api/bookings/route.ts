@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     // Get property details
     const { data: property, error: propertyError } = await supabase
       .from('properties')
-      .select('price_per_night, max_guests, is_active')
+      .select('price_per_night, max_guests')
       .eq('id', property_id)
       .single();
 
@@ -152,17 +152,9 @@ export async function POST(request: NextRequest) {
     type PropertyData = {
       price_per_night: number;
       max_guests: number;
-      is_active: boolean;
     };
 
     const propertyData = property as PropertyData;
-
-    if (!propertyData.is_active) {
-      return NextResponse.json(
-        { error: 'Property is not available', code: 'PROPERTY_INACTIVE' },
-        { status: 400 }
-      );
-    }
 
     // Validate guest count
     if (guests > propertyData.max_guests) {

@@ -43,11 +43,10 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient();
     
-    // Build query
+    // Build query - is_active filter removed until migration is run
     let query = supabase
       .from('properties')
-      .select('*', { count: 'exact' })
-      .eq('is_active', true);
+      .select('*', { count: 'exact' });
 
     // Apply filters
     if (location) {

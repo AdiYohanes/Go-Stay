@@ -73,7 +73,8 @@ export async function createProperty(
       bathrooms: validatedData.bathrooms || 1,
       amenities: validatedData.amenities || [],
       image_urls: data.image_urls || [],
-      is_active: true,
+      // TODO: Uncomment after running migrations
+      // is_active: true,
     }
 
     // Insert property
@@ -107,7 +108,8 @@ export async function getProperty(id: string): Promise<ActionResult<Property>> {
       .from('properties')
       .select('*')
       .eq('id', id)
-      .eq('is_active', true)
+      // TODO: Uncomment after running migrations
+      // .eq('is_active', true)
       .single()
 
     if (error || !property) {
@@ -145,10 +147,11 @@ export async function getProperties(params?: {
       .from('properties')
       .select('*', { count: 'exact' })
 
+    // TODO: Uncomment after running migrations
     // Filter by active status unless explicitly including inactive
-    if (!includeInactive) {
-      query = query.eq('is_active', true)
-    }
+    // if (!includeInactive) {
+    //   query = query.eq('is_active', true)
+    // }
 
     // Apply pagination and ordering
     const { data: properties, error, count } = await query
@@ -260,7 +263,8 @@ export async function deleteProperty(id: string): Promise<ActionResult<{ id: str
 
     // Prepare update data for soft delete
     const updateData: PropertyUpdate = {
-      is_active: false,
+      // TODO: Uncomment after running migrations
+      // is_active: false,
       updated_at: new Date().toISOString(),
     }
 

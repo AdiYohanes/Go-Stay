@@ -11,7 +11,10 @@ import {
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { NotificationPreferencesForm } from "@/components/profile/NotificationPreferencesForm";
 import { PasswordChangeForm } from "@/components/profile/PasswordChangeForm";
-import { Bell, Lock, Calendar, Star } from "lucide-react";
+import { Bell, Lock, Calendar, Star, User } from "lucide-react";
+import { Database } from "@/types/database.types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 export const metadata: Metadata = {
   title: "My Profile | Hotel Booking",
@@ -30,11 +33,11 @@ export default async function ProfilePage() {
   }
 
   // Fetch user profile
-  const { data: profile } = await supabase
+  const { data: profile } = (await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .single()) as { data: Profile | null };
 
   // Fetch user statistics
   const { count: bookingsCount } = await supabase
@@ -47,12 +50,16 @@ export default async function ProfilePage() {
     .select("*", { count: "exact", head: true })
     .eq("user_id", user.id);
 
-  const notificationPreferences = profile?.notification_preferences || {
+  const defaultPreferences = {
     email_booking_confirmation: true,
     email_booking_reminder: true,
     email_marketing: false,
     push_enabled: false,
   };
+
+  const notificationPreferences =
+    (profile?.notification_preferences as typeof defaultPreferences) ||
+    defaultPreferences;
 
   return (
     <div className="min-h-screen bg-background py-8">

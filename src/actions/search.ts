@@ -39,7 +39,6 @@ export async function searchProperties(
     let query = supabase
       .from('properties')
       .select('*', { count: 'exact' })
-      .eq('is_active', true)
 
     // Location filter - partial text matching (case-insensitive)
     // Requirement 3.1
@@ -68,7 +67,7 @@ export async function searchProperties(
       query = query.contains('amenities', amenities)
     }
 
-    // Apply sorting
+    // Apply sorting - using only columns that exist in database
     // Requirement 3.6
     switch (sortBy) {
       case 'price_asc':
@@ -78,27 +77,23 @@ export async function searchProperties(
         query = query.order('price_per_night', { ascending: false })
         break
       case 'rating':
-        // Order by rating (nulls last), then by review count
-        query = query
-          .order('rating', { ascending: false, nullsFirst: false })
-          .order('review_count', { ascending: false })
-        break
+      case 'relevance':
       case 'newest':
+      default:
+        // Default to newest first (rating column not yet in database)
         query = query.order('created_at', { ascending: false })
         break
-      case 'relevance':
-      default:
-        // For relevance, prioritize properties with ratings, then by newest
-        query = query
-          .order('rating', { ascending: false, nullsFirst: false })
-          .order('created_at', { ascending: false })
-        break
     }
+
+    // If we need to check availability, fetch more results to account for filtering
+    // Otherwise use normal pagination
+    const fetchLimit = (checkIn && checkOut) ? limit * 3 : limit
+    const fetchOffset = (checkIn && checkOut) ? 0 : offset
 
     // Apply pagination
     // Requirement 9.3
     const { data: properties, error, count } = await query
-      .range(offset, offset + limit - 1)
+      .range(fetchOffset, fetchOffset + fetchLimit - 1)
 
     if (error) {
       throw new Error(error.message)
@@ -119,7 +114,6 @@ export async function searchProperties(
             const result = await checkAvailability(property.id, startDate, endDate)
             return { property, available: result.available }
           } catch (error) {
-            console.error(`Error checking availability for property ${property.id}:`, error)
             // If availability check fails, exclude the property to be safe
             return { property, available: false }
           }
@@ -129,9 +123,14 @@ export async function searchProperties(
       filteredProperties = availabilityChecks
         .filter(({ available }) => available)
         .map(({ property }) => property)
+
+      // Apply pagination to filtered results
+      const start = offset
+      const end = offset + limit
+      filteredProperties = filteredProperties.slice(start, end)
     }
 
-    // Recalculate pagination based on filtered results
+    // Calculate pagination
     const total = checkIn && checkOut ? filteredProperties.length : (count || 0)
     const totalPages = Math.ceil(total / limit)
     const hasMore = page < totalPages

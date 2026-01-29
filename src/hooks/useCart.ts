@@ -40,12 +40,12 @@ export function useCart() {
       if (result.success) {
         setCart(result.data);
       } else {
-        console.error('Failed to fetch cart:', result.error);
-        toast.error('Failed to load cart');
+        // Silently fail - user might not be logged in
+        setCart({ items: [], summary: { itemCount: 0, subtotal: 0, totalServiceFee: 0, total: 0, allAvailable: true } });
       }
     } catch (error) {
-      console.error('Error fetching cart:', error);
-      toast.error('Failed to load cart');
+      // Silently fail - user might not be logged in
+      setCart({ items: [], summary: { itemCount: 0, subtotal: 0, totalServiceFee: 0, total: 0, allAvailable: true } });
     } finally {
       setLoading(false);
     }

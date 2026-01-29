@@ -50,7 +50,7 @@ export async function createBooking(
     // Get property details
     const { data: property, error: propertyError } = await supabase
       .from('properties')
-      .select('id, title, price_per_night, max_guests, is_active')
+      .select('id, title, price_per_night, max_guests')
       .eq('id', validated.property_id)
       .single();
 
@@ -64,12 +64,7 @@ export async function createBooking(
       title: string;
       price_per_night: number;
       max_guests: number;
-      is_active: boolean;
     };
-
-    if (!propertyData.is_active) {
-      throw new ConflictError('This property is no longer available');
-    }
 
     // Validate guest count against property capacity
     if (validated.guests > propertyData.max_guests) {

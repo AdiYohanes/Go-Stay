@@ -83,11 +83,8 @@ export async function getDashboardMetrics(): Promise<ActionResult<DashboardMetri
       .from('properties')
       .select('*', { count: 'exact', head: true });
 
-    // Get active properties count
-    const { count: activeProperties } = await supabase
-      .from('properties')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_active', true);
+    // Get active properties count (same as total for now until is_active column is added)
+    const activeProperties = totalProperties;
 
     // Get booking counts by status
     const { count: pendingBookings } = await supabase
@@ -245,10 +242,10 @@ export async function getAdminProperties(params?: {
       .from('properties')
       .select('*', { count: 'exact' });
 
-    // Filter by active status if specified
-    if (!includeInactive) {
-      query = query.eq('is_active', true);
-    }
+    // Note: is_active filter disabled until migration is run
+    // if (!includeInactive) {
+    //   query = query.eq('is_active', true);
+    // }
 
     // Apply pagination and ordering
     const { data: properties, error, count } = await query
@@ -610,8 +607,7 @@ export async function getOccupancyRates(params?: {
     // Build properties query
     let propertiesQuery = supabase
       .from('properties')
-      .select('id, title')
-      .eq('is_active', true);
+      .select('id, title');
 
     if (params?.propertyId) {
       propertiesQuery = propertiesQuery.eq('id', params.propertyId);

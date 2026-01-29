@@ -10,7 +10,13 @@ export type PaymentStatus =
   | "failed"
   | "cancelled"
   | "expired"
-  | "refunded";
+  | "refunded"
+  // Midtrans specific statuses
+  | "settlement"
+  | "capture"
+  | "deny"
+  | "cancel"
+  | "expire";
 
 export interface PaymentIntent {
   id: string;
@@ -22,6 +28,7 @@ export interface PaymentIntent {
   currency?: string;
   status: PaymentStatus;
   payment_method?: string | null;
+  payment_type?: string | null;
   payment_data?: Record<string, unknown>;
   snap_token?: string | null;
   snap_redirect_url?: string | null;

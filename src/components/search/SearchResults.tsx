@@ -208,12 +208,7 @@ export function SearchResults({
               }}
               layout
             >
-              <PropertyCard
-                property={property}
-                showRating={true}
-                checkIn={checkIn}
-                checkOut={checkOut}
-              />
+              <PropertyCard property={property} showRating={true} />
             </motion.div>
           ))}
         </AnimatePresence>

@@ -157,8 +157,9 @@ export async function getPropertyReviews(
       .order('created_at', { ascending: false });
 
     if (reviewsError) {
-      console.error('Error fetching reviews:', reviewsError);
-      throw new Error('Failed to fetch reviews');
+      // Silently return empty array if reviews fetch fails
+      // This allows the page to load even if reviews table has issues
+      return [];
     }
 
     return (reviews || []) as unknown as ReviewWithUser[];

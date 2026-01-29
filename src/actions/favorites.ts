@@ -29,21 +29,15 @@ export async function addToFavorites(propertyId: string): Promise<ActionResult<{
     const user = await getAuthenticatedUser()
     const supabase = await createClient()
 
-    // Check if property exists and is active
+    // Check if property exists
     const { data: property } = await supabase
       .from('properties')
-      .select('id, is_active')
+      .select('id')
       .eq('id', propertyId)
       .single()
 
     if (!property) {
       throw new NotFoundError('Property')
-    }
-
-    // Type assertion for is_active check
-    const propertyData = property as { id: string; is_active: boolean }
-    if (!propertyData.is_active) {
-      throw new Error('Cannot favorite an inactive property')
     }
 
     // Check if already favorited
@@ -166,7 +160,6 @@ export async function getUserFavorites(params?: {
           bathrooms,
           rating,
           review_count,
-          is_active,
           created_at,
           updated_at
         )
@@ -179,14 +172,14 @@ export async function getUserFavorites(params?: {
       throw new Error(error.message)
     }
 
-    // Extract properties from favorites and filter out inactive ones
+    // Extract properties from favorites
     const properties = (favorites || [])
       .map(fav => {
         // Type assertion for the nested property
         const favData = fav as { property: Property | null }
         return favData.property
       })
-      .filter((prop): prop is Property => prop !== null && prop.is_active)
+      .filter((prop): prop is Property => prop !== null)
 
     const total = count || 0
     const totalPages = Math.ceil(total / limit)

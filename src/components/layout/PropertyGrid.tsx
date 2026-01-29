@@ -22,9 +22,9 @@ interface PropertyGridProps {
 }
 
 const gapClasses = {
-  sm: "gap-4",
-  md: "gap-6",
-  lg: "gap-8",
+  sm: "gap-4 gap-y-6",
+  md: "gap-6 gap-y-8",
+  lg: "gap-8 gap-y-10",
 };
 
 export function PropertyGrid({
@@ -94,17 +94,21 @@ export function PropertyGridSkeleton({
 function PropertyGridSkeletonItem() {
   return (
     <div className="w-full animate-pulse">
-      {/* Image skeleton */}
-      <div className="aspect-square rounded-xl bg-muted" />
+      {/* Image skeleton - 4:3 aspect ratio */}
+      <div className="aspect-[4/3] rounded-xl bg-muted" />
       {/* Content skeleton */}
       <div className="mt-3 space-y-2">
-        <div className="flex justify-between">
-          <div className="h-4 w-2/3 rounded bg-muted" />
-          <div className="h-4 w-12 rounded bg-muted" />
+        {/* Title and rating */}
+        <div className="flex justify-between items-start">
+          <div className="h-4 w-3/4 rounded-md bg-muted" />
+          <div className="h-4 w-10 rounded-md bg-muted" />
         </div>
-        <div className="h-3 w-1/2 rounded bg-muted" />
-        <div className="h-3 w-1/3 rounded bg-muted" />
-        <div className="h-4 w-24 rounded bg-muted mt-1" />
+        {/* Location */}
+        <div className="h-3.5 w-1/2 rounded-md bg-muted" />
+        {/* Property type */}
+        <div className="h-3.5 w-2/3 rounded-md bg-muted" />
+        {/* Price */}
+        <div className="h-4 w-24 rounded-md bg-muted pt-1" />
       </div>
     </div>
   );

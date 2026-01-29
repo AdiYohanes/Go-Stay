@@ -66,11 +66,7 @@ export default async function PropertiesPage({ searchParams }: PageProps) {
       {/* Search Bar - Compact variant */}
       <div className="sticky top-0 z-30 bg-background border-b border-border shadow-sm">
         <div className="w-full max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-6 px-4 py-4">
-          <SearchBar
-            variant="compact"
-            initialValues={searchFilters}
-            onSearch={() => {}}
-          />
+          <SearchBar variant="compact" initialValues={searchFilters} />
         </div>
       </div>
 

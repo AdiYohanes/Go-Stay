@@ -154,9 +154,8 @@ export default async function PropertyPage({ params }: PageProps) {
                     }
                   >
                     <DynamicReviewList
-                      reviews={reviews}
-                      averageRating={averageRating || 0}
-                      totalReviews={reviews.length}
+                      propertyId={property.id}
+                      initialReviews={reviews}
                     />
                   </Suspense>
                 </div>

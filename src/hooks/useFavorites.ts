@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { addToFavorites, removeFromFavorites } from '@/actions/favorites'
 import { toast } from 'sonner'
 
@@ -11,6 +12,7 @@ import { toast } from 'sonner'
 export function useFavorites(propertyId: string, initialIsFavorited: boolean = false) {
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited)
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const toggleFavorite = () => {
     // Optimistic update
@@ -25,6 +27,16 @@ export function useFavorites(propertyId: string, initialIsFavorited: boolean = f
           if (!result.success) {
             // Revert on error
             setIsFavorited(previousState)
+            
+            // Check if authentication error
+            if (result.error?.includes('Authentication required') || 
+                result.error?.includes('authentication') ||
+                result.error?.includes('login')) {
+              toast.error('Please login to manage favorites')
+              router.push('/login')
+              return
+            }
+            
             toast.error(result.error || 'Failed to remove from favorites')
           } else {
             toast.success('Removed from favorites')
@@ -35,6 +47,16 @@ export function useFavorites(propertyId: string, initialIsFavorited: boolean = f
           if (!result.success) {
             // Revert on error
             setIsFavorited(previousState)
+            
+            // Check if authentication error
+            if (result.error?.includes('Authentication required') || 
+                result.error?.includes('authentication') ||
+                result.error?.includes('login')) {
+              toast.error('Please login to add favorites')
+              router.push('/login')
+              return
+            }
+            
             toast.error(result.error || 'Failed to add to favorites')
           } else {
             toast.success('Added to favorites')
