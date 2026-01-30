@@ -185,151 +185,205 @@ export default function Home() {
           </Suspense>
         </div>
 
-        {/* Call to Action Section - Redesigned */}
-        <div className="mt-20 relative overflow-hidden rounded-3xl">
-          {/* Background with overlay */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&q=80')",
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-teal-600/95 via-cyan-600/90 to-blue-600/95" />
+        {/* Call to Action Section - Modern Split Design */}
+        <div className="mt-20 relative overflow-hidden">
+          <div className="grid lg:grid-cols-2 min-h-[500px]">
+            {/* Left Side - Image */}
+            <div className="relative h-64 lg:h-auto">
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80')",
+                }}
+              />
+              {/* Subtle overlay for better contrast */}
+              <div className="absolute inset-0 bg-black/20" />
 
-          {/* Content */}
-          <div className="relative w-full max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-6 px-4 py-20 md:py-24">
-            <div className="max-w-4xl mx-auto text-center text-white">
+              {/* Floating Stats Card */}
+              <div className="absolute bottom-6 left-6 right-6 lg:bottom-10 lg:left-10 lg:right-auto">
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl max-w-xs">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-teal-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-gray-900">
+                        4.9
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Rating Rata-rata
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <svg
+                        key={star}
+                        className="w-5 h-5 text-yellow-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Dari 10,000+ ulasan
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Content */}
+            <div className="bg-gray-50 p-8 lg:p-16 flex flex-col justify-center">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-6">
-                <span className="text-2xl">🌊</span>
-                <span className="text-sm font-semibold">
-                  Penawaran Terbatas
-                </span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 text-teal-700 rounded-full w-fit mb-6">
+                <span className="w-2 h-2 bg-teal-500 rounded-full animate-pulse" />
+                <span className="text-sm font-medium">Penawaran Terbatas</span>
               </div>
 
               {/* Heading */}
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                Siap Memulai Petualangan
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Temukan Resort
                 <br />
-                <span className="text-cyan-200">Liburan Impian Anda?</span>
+                <span className="text-teal-600">Impian Anda</span>
               </h2>
 
               {/* Description */}
-              <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Bergabung dengan{" "}
-                <span className="font-bold text-cyan-200">10,000+</span>{" "}
-                wisatawan yang telah menemukan resort sempurna di Bali. Dapatkan{" "}
-                <span className="font-bold text-cyan-200">
-                  diskon hingga 40%
-                </span>{" "}
-                untuk pemesanan hari ini!
+              <p className="text-gray-600 text-lg mb-8 leading-relaxed max-w-lg">
+                Nikmati pengalaman liburan tak terlupakan di Bali dengan koleksi
+                resort dan villa premium kami. Dapatkan diskon hingga 40% untuk
+                pemesanan hari ini.
               </p>
 
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 md:gap-8 mb-10 max-w-2xl mx-auto">
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-cyan-200 mb-1">
-                    12+
+              {/* Features */}
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center shrink-0">
+                    <svg
+                      className="w-5 h-5 text-teal-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                   </div>
-                  <div className="text-sm md:text-base text-white/80">
-                    Resort Premium
-                  </div>
+                  <span className="text-sm text-gray-700">Pembayaran Aman</span>
                 </div>
-                <div className="text-center border-x border-white/20">
-                  <div className="text-3xl md:text-4xl font-bold text-cyan-200 mb-1">
-                    4.9
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center shrink-0">
+                    <svg
+                      className="w-5 h-5 text-teal-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                   </div>
-                  <div className="text-sm md:text-base text-white/80">
-                    Rating Rata-rata
-                  </div>
+                  <span className="text-sm text-gray-700">
+                    Gratis Pembatalan
+                  </span>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-cyan-200 mb-1">
-                    24/7
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center shrink-0">
+                    <svg
+                      className="w-5 h-5 text-teal-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                   </div>
-                  <div className="text-sm md:text-base text-white/80">
-                    Customer Support
+                  <span className="text-sm text-gray-700">
+                    Konfirmasi Instan
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center shrink-0">
+                    <svg
+                      className="w-5 h-5 text-teal-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                   </div>
+                  <span className="text-sm text-gray-700">Support 24/7</span>
                 </div>
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   asChild
                   size="lg"
-                  className="bg-white text-teal-600 hover:bg-cyan-50 font-bold text-base px-8 py-6 h-auto shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+                  className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all"
                 >
                   <Link href="/properties" className="flex items-center gap-2">
-                    <span>🏖️</span>
-                    Jelajahi Resort Sekarang
+                    Jelajahi Resort
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 8l4 4m0 0l-4 4m4-4H3"
+                      />
+                    </svg>
                   </Link>
                 </Button>
                 <Button
                   asChild
                   size="lg"
                   variant="outline"
-                  className="border-2 border-white text-white hover:bg-white hover:text-teal-600 font-semibold text-base px-8 py-6 h-auto backdrop-blur-sm bg-white/10"
+                  className="border-2 border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold px-8 py-6 h-auto"
                 >
-                  <Link href="/register" className="flex items-center gap-2">
-                    <span>🎁</span>
-                    Daftar & Dapatkan Promo
-                  </Link>
+                  <Link href="/register">Daftar Gratis</Link>
                 </Button>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-white/70">
-                <div className="flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-cyan-300"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Pembayaran Aman</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-cyan-300"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Gratis Pembatalan</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-cyan-300"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Konfirmasi Instan</span>
-                </div>
               </div>
             </div>
           </div>
-
-          {/* Decorative Elements */}
-          <div className="absolute top-10 left-10 w-20 h-20 bg-cyan-300/20 rounded-full blur-2xl" />
-          <div className="absolute bottom-10 right-10 w-32 h-32 bg-blue-300/20 rounded-full blur-3xl" />
         </div>
       </main>
 
