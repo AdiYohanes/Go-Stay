@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { addToFavorites, removeFromFavorites } from '@/actions/favorites'
+import { addToFavorites, removeFromFavorites, getUserFavorites } from '@/actions/favorites'
 import { toast } from 'sonner'
 
 /**
@@ -12,7 +12,27 @@ import { toast } from 'sonner'
 export function useFavorites(propertyId: string, initialIsFavorited: boolean = false) {
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited)
   const [isPending, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+
+  // Fetch actual favorite status on mount
+  useEffect(() => {
+    async function checkFavoriteStatus() {
+      try {
+        const result = await getUserFavorites()
+        if (result.success && result.data) {
+          const favoriteIds = result.data.map(fav => fav.property_id)
+          setIsFavorited(favoriteIds.includes(propertyId))
+        }
+      } catch (error) {
+        // Silently fail - user might not be logged in
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    checkFavoriteStatus()
+  }, [propertyId])
 
   const toggleFavorite = () => {
     // Optimistic update
@@ -72,7 +92,7 @@ export function useFavorites(propertyId: string, initialIsFavorited: boolean = f
 
   return {
     isFavorited,
-    isPending,
+    isPending: isPending || isLoading,
     toggleFavorite,
   }
 }
