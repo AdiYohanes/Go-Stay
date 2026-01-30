@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   CalendarIcon,
   MapPinIcon,
-  Clock,
   ArrowRight,
   Sparkles,
   CheckCircle2,
@@ -75,7 +73,7 @@ export default async function MyBookingsPage() {
   }
 
   // Fetch bookings from database with property details
-  const { data: bookings, error } = await supabase
+  const { data: bookings } = await supabase
     .from("bookings")
     .select(
       `
@@ -95,7 +93,7 @@ export default async function MyBookingsPage() {
   const userBookings = (bookings as BookingWithProperty[]) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header Section */}
       <div className="bg-teal-600 text-white">
         <div className="container px-4 py-12 md:px-6 md:py-16">
@@ -114,34 +112,34 @@ export default async function MyBookingsPage() {
       </div>
 
       {/* Content Section */}
-      <div className="container px-4 py-8 md:px-6 md:py-12">
-        {userBookings.length === 0 ? (
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="max-w-md w-full">
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center">
-                <div className="w-20 h-20 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-6">
-                  <Sparkles className="h-10 w-10 text-teal-600" />
-                </div>
-                <h3 className="font-bold text-xl md:text-2xl mb-2">
-                  Mulai Petualangan Anda
-                </h3>
-                <p className="text-gray-600 text-sm md:text-base mb-6">
-                  Belum ada booking. Jelajahi resort-resort menakjubkan dan buat
-                  kenangan indah bersama kami!
-                </p>
-                <Link href="/properties">
-                  <Button
-                    size="lg"
-                    className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg w-full sm:w-auto"
-                  >
-                    Jelajahi Resort
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+      {userBookings.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center px-4 py-12">
+          <div className="max-w-md w-full">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center">
+              <div className="w-20 h-20 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-6">
+                <Sparkles className="h-10 w-10 text-teal-600" />
               </div>
+              <h3 className="font-bold text-xl md:text-2xl mb-2">
+                Mulai Petualangan Anda
+              </h3>
+              <p className="text-gray-600 text-sm md:text-base mb-6">
+                Belum ada booking. Jelajahi resort-resort menakjubkan dan buat
+                kenangan indah bersama kami!
+              </p>
+              <Link href="/properties">
+                <Button
+                  size="lg"
+                  className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg w-full sm:w-auto"
+                >
+                  Jelajahi Resort
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
-        ) : (
+        </div>
+      ) : (
+        <div className="container px-4 py-8 md:px-6 md:py-12">
           <div className="grid gap-6 max-w-5xl mx-auto">
             {userBookings.map((booking) => {
               const statusConfig = getStatusConfig(booking.status);
@@ -268,8 +266,8 @@ export default async function MyBookingsPage() {
               );
             })}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
