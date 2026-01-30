@@ -144,23 +144,20 @@ export default function RegisterPage() {
             <DialogTitle className="text-xl font-semibold">
               Registrasi Berhasil! 🎉
             </DialogTitle>
-            <DialogDescription className="text-center pt-2">
-              <div className="space-y-3">
-                <p>Akun Anda telah berhasil dibuat.</p>
-                <div className="flex items-center justify-center gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
-                  <Mail className="h-5 w-5 shrink-0" />
-                  <span>
-                    Cek email <strong>{registeredEmail}</strong> untuk
-                    konfirmasi akun Anda.
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Tidak menerima email? Cek folder spam atau tunggu beberapa
-                  menit.
-                </p>
-              </div>
-            </DialogDescription>
           </DialogHeader>
+          <div className="text-center space-y-3 text-sm text-muted-foreground pt-2">
+            <p>Akun Anda telah berhasil dibuat.</p>
+            <div className="flex items-center justify-center gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
+              <Mail className="h-5 w-5 shrink-0" />
+              <span>
+                Cek email <strong>{registeredEmail}</strong> untuk konfirmasi
+                akun Anda.
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Tidak menerima email? Cek folder spam atau tunggu beberapa menit.
+            </p>
+          </div>
           <div className="flex flex-col gap-3 pt-4">
             <Button onClick={handleGoToLogin} className="w-full">
               Lanjut ke Login
