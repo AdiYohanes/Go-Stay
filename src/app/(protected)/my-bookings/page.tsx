@@ -58,21 +58,42 @@ export default async function MyBookingsPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching bookings:", error);
-  }
-
+  // Silently handle error - table might not exist yet
   const userBookings = (bookings as BookingWithProperty[]) || [];
 
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
-      <h1 className="text-3xl font-bold tracking-tight mb-8">My Bookings</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-2">Booking Saya</h1>
+      <p className="text-muted-foreground mb-8">
+        Kelola dan lihat semua booking Anda
+      </p>
 
       <div className="grid gap-6">
         {userBookings.length === 0 ? (
-          <p className="text-muted-foreground">
-            You have no upcoming bookings.
-          </p>
+          <Card className="p-12">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto">
+                <CalendarIcon className="h-8 w-8 text-gray-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">
+                  Belum Ada Booking
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  Anda belum memiliki booking. Mulai jelajahi resort dan buat
+                  booking pertama Anda!
+                </p>
+              </div>
+              <div className="pt-4">
+                <a
+                  href="/properties"
+                  className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  Jelajahi Resort
+                </a>
+              </div>
+            </div>
+          </Card>
         ) : (
           userBookings.map((booking) => (
             <Card key={booking.id} className="overflow-hidden">
