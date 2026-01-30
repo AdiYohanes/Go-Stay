@@ -12,26 +12,35 @@ import { toast } from 'sonner'
 export function useFavorites(propertyId: string, initialIsFavorited: boolean = false) {
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited)
   const [isPending, startTransition] = useTransition()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isInitializing, setIsInitializing] = useState(true)
   const router = useRouter()
 
   // Fetch actual favorite status on mount
   useEffect(() => {
+    let mounted = true
+    
     async function checkFavoriteStatus() {
       try {
         const result = await getUserFavorites()
-        if (result.success && result.data) {
+        if (mounted && result.success && result.data) {
           const favoriteIds = result.data.map(fav => fav.property_id)
-          setIsFavorited(favoriteIds.includes(propertyId))
+          const isCurrentlyFavorited = favoriteIds.includes(propertyId)
+          setIsFavorited(isCurrentlyFavorited)
         }
       } catch (error) {
         // Silently fail - user might not be logged in
       } finally {
-        setIsLoading(false)
+        if (mounted) {
+          setIsInitializing(false)
+        }
       }
     }
     
     checkFavoriteStatus()
+    
+    return () => {
+      mounted = false
+    }
   }, [propertyId])
 
   const toggleFavorite = () => {
@@ -52,14 +61,14 @@ export function useFavorites(propertyId: string, initialIsFavorited: boolean = f
             if (result.error?.includes('Authentication required') || 
                 result.error?.includes('authentication') ||
                 result.error?.includes('login')) {
-              toast.error('Please login to manage favorites')
+              toast.error('Silakan login untuk mengelola favorit')
               router.push('/login')
               return
             }
             
-            toast.error(result.error || 'Failed to remove from favorites')
+            toast.error(result.error || 'Gagal menghapus dari favorit')
           } else {
-            toast.success('Removed from favorites')
+            toast.success('Dihapus dari favorit')
           }
         } else {
           // Add to favorites
@@ -72,27 +81,30 @@ export function useFavorites(propertyId: string, initialIsFavorited: boolean = f
             if (result.error?.includes('Authentication required') || 
                 result.error?.includes('authentication') ||
                 result.error?.includes('login')) {
-              toast.error('Please login to add favorites')
+              toast.error('Silakan login untuk menambah favorit')
               router.push('/login')
               return
             }
             
-            toast.error(result.error || 'Failed to add to favorites')
+            // Don't show error if already favorited (race condition)
+            if (!result.error?.includes('already')) {
+              toast.error(result.error || 'Gagal menambah ke favorit')
+            }
           } else {
-            toast.success('Added to favorites')
+            toast.success('Ditambahkan ke favorit')
           }
         }
       } catch (error) {
         // Revert on error
         setIsFavorited(previousState)
-        toast.error('An unexpected error occurred')
+        toast.error('Terjadi kesalahan')
       }
     })
   }
 
   return {
     isFavorited,
-    isPending: isPending || isLoading,
+    isPending: isPending || isInitializing,
     toggleFavorite,
   }
 }
