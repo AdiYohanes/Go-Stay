@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { addToFavorites, removeFromFavorites, getUserFavorites } from '@/actions/favorites'
+import { addToFavorites, removeFromFavorites, checkIsFavorite } from '@/actions/favorites'
 import { toast } from 'sonner'
 
 /**
@@ -19,13 +19,11 @@ export function useFavorites(propertyId: string, initialIsFavorited: boolean = f
   useEffect(() => {
     let mounted = true
     
-    async function checkFavoriteStatus() {
+    async function fetchFavoriteStatus() {
       try {
-        const result = await getUserFavorites()
-        if (mounted && result.success && result.data) {
-          const favoriteIds = result.data.map(fav => fav.property_id)
-          const isCurrentlyFavorited = favoriteIds.includes(propertyId)
-          setIsFavorited(isCurrentlyFavorited)
+        const result = await checkIsFavorite(propertyId)
+        if (mounted && result.success) {
+          setIsFavorited(result.data)
         }
       } catch (error) {
         // Silently fail - user might not be logged in
@@ -36,7 +34,7 @@ export function useFavorites(propertyId: string, initialIsFavorited: boolean = f
       }
     }
     
-    checkFavoriteStatus()
+    fetchFavoriteStatus()
     
     return () => {
       mounted = false
@@ -89,6 +87,9 @@ export function useFavorites(propertyId: string, initialIsFavorited: boolean = f
             // Don't show error if already favorited (race condition)
             if (!result.error?.includes('already')) {
               toast.error(result.error || 'Gagal menambah ke favorit')
+            } else {
+              // Already favorited, just update state
+              setIsFavorited(true)
             }
           } else {
             toast.success('Ditambahkan ke favorit')
