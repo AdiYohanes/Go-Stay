@@ -116,25 +116,29 @@ export default async function MyBookingsPage() {
       {/* Content Section */}
       <div className="container px-4 py-8 md:px-6 md:py-12">
         {userBookings.length === 0 ? (
-          <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-              <div className="w-20 h-20 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="h-10 w-10 text-teal-600" />
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="max-w-md w-full">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center">
+                <div className="w-20 h-20 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-6">
+                  <Sparkles className="h-10 w-10 text-teal-600" />
+                </div>
+                <h3 className="font-bold text-xl md:text-2xl mb-2">
+                  Mulai Petualangan Anda
+                </h3>
+                <p className="text-gray-600 text-sm md:text-base mb-6">
+                  Belum ada booking. Jelajahi resort-resort menakjubkan dan buat
+                  kenangan indah bersama kami!
+                </p>
+                <Link href="/properties">
+                  <Button
+                    size="lg"
+                    className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg w-full sm:w-auto"
+                  >
+                    Jelajahi Resort
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
-              <h3 className="font-bold text-xl mb-2">Mulai Petualangan Anda</h3>
-              <p className="text-gray-600 text-sm mb-6">
-                Belum ada booking. Jelajahi resort-resort menakjubkan dan buat
-                kenangan indah bersama kami!
-              </p>
-              <Link href="/properties">
-                <Button
-                  size="lg"
-                  className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg"
-                >
-                  Jelajahi Resort
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
             </div>
           </div>
         ) : (
@@ -190,10 +194,10 @@ export default async function MyBookingsPage() {
                     </div>
 
                     {/* Content Section */}
-                    <div className="md:w-3/5 p-6 md:p-8">
+                    <div className="md:w-3/5 p-4 sm:p-6 md:p-8">
                       {/* Property Info */}
-                      <div className="mb-6">
-                        <h3 className="font-bold text-xl md:text-2xl mb-2 text-gray-900 group-hover:text-teal-600 transition-colors">
+                      <div className="mb-4 sm:mb-6">
+                        <h3 className="font-bold text-lg sm:text-xl md:text-2xl mb-2 text-gray-900 group-hover:text-teal-600 transition-colors">
                           {booking.property?.title || "Property"}
                         </h3>
                         <div className="flex items-center text-gray-600">
@@ -205,8 +209,8 @@ export default async function MyBookingsPage() {
                       </div>
 
                       {/* Date Info */}
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+                        <div className="bg-gray-50 rounded-xl p-3 sm:p-4 border border-gray-100">
                           <div className="flex items-center gap-2 mb-2">
                             <div className="p-1.5 bg-teal-100 rounded-lg">
                               <CalendarIcon className="h-4 w-4 text-teal-600" />
@@ -215,7 +219,7 @@ export default async function MyBookingsPage() {
                               Check-in
                             </span>
                           </div>
-                          <p className="font-bold text-gray-900">
+                          <p className="font-bold text-sm sm:text-base text-gray-900">
                             {format(
                               parseISO(booking.start_date),
                               "dd MMM yyyy",
@@ -223,7 +227,7 @@ export default async function MyBookingsPage() {
                           </p>
                         </div>
 
-                        <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <div className="bg-gray-50 rounded-xl p-3 sm:p-4 border border-gray-100">
                           <div className="flex items-center gap-2 mb-2">
                             <div className="p-1.5 bg-cyan-100 rounded-lg">
                               <CalendarIcon className="h-4 w-4 text-cyan-600" />
@@ -232,26 +236,26 @@ export default async function MyBookingsPage() {
                               Check-out
                             </span>
                           </div>
-                          <p className="font-bold text-gray-900">
+                          <p className="font-bold text-sm sm:text-base text-gray-900">
                             {format(parseISO(booking.end_date), "dd MMM yyyy")}
                           </p>
                         </div>
                       </div>
 
                       {/* Price & Action */}
-                      <div className="flex items-center justify-between pt-6 border-t border-gray-100">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 border-t border-gray-100">
                         <div>
                           <p className="text-xs text-gray-500 mb-1">
                             Total Pembayaran
                           </p>
-                          <p className="font-bold text-2xl text-teal-600">
+                          <p className="font-bold text-xl sm:text-2xl text-teal-600">
                             {formatRupiah(booking.total_price)}
                           </p>
                         </div>
                         <Link href={`/property/${booking.property_id}`}>
                           <Button
                             variant="outline"
-                            className="border-teal-200 text-teal-700 hover:bg-teal-50 hover:border-teal-300"
+                            className="border-teal-200 text-teal-700 hover:bg-teal-50 hover:border-teal-300 w-full sm:w-auto"
                           >
                             Lihat Detail
                             <ArrowRight className="ml-2 h-4 w-4" />
