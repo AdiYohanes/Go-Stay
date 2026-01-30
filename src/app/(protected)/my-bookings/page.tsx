@@ -12,6 +12,23 @@ import { CalendarIcon, MapPinIcon } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { formatRupiah } from "@/lib/mock-data";
 
+type BookingWithProperty = {
+  id: string;
+  user_id: string;
+  property_id: string;
+  start_date: string;
+  end_date: string;
+  total_price: number;
+  status: string;
+  created_at: string;
+  property: {
+    id: string;
+    title: string;
+    location: string;
+    image_urls: string[];
+  } | null;
+};
+
 export default async function MyBookingsPage() {
   const supabase = await createClient();
 
@@ -45,7 +62,7 @@ export default async function MyBookingsPage() {
     console.error("Error fetching bookings:", error);
   }
 
-  const userBookings = bookings || [];
+  const userBookings = (bookings as BookingWithProperty[]) || [];
 
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
