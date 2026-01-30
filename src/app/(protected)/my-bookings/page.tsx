@@ -95,12 +95,12 @@ export default async function MyBookingsPage() {
   const userBookings = (bookings as BookingWithProperty[]) || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
+      <div className="bg-teal-600 text-white">
         <div className="container px-4 py-12 md:px-6 md:py-16">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+            <div className="p-2 bg-white/20 rounded-lg">
               <CalendarIcon className="h-6 w-6" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold">Booking Saya</h1>
@@ -118,7 +118,7 @@ export default async function MyBookingsPage() {
         {userBookings.length === 0 ? (
           <div className="max-w-md mx-auto">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-6">
                 <Sparkles className="h-10 w-10 text-teal-600" />
               </div>
               <h3 className="font-bold text-xl mb-2">Mulai Petualangan Anda</h3>
@@ -129,7 +129,7 @@ export default async function MyBookingsPage() {
               <Link href="/properties">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white shadow-lg shadow-teal-500/30"
+                  className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg"
                 >
                   Jelajahi Resort
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -164,7 +164,7 @@ export default async function MyBookingsPage() {
                           alt={booking.property?.title || "Property"}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-black/30" />
 
                         {/* Status Badge on Image */}
                         <div className="absolute top-4 left-4">
@@ -244,7 +244,7 @@ export default async function MyBookingsPage() {
                           <p className="text-xs text-gray-500 mb-1">
                             Total Pembayaran
                           </p>
-                          <p className="font-bold text-2xl bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                          <p className="font-bold text-2xl text-teal-600">
                             {formatRupiah(booking.total_price)}
                           </p>
                         </div>
