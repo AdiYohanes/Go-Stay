@@ -185,8 +185,289 @@ export default function Home() {
           </Suspense>
         </div>
 
+        {/* Why Choose Us Section */}
+        <div className="mt-24 bg-gray-50 py-20">
+          <div className="w-full max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-6 px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                Kenapa Memilih Go-Stay?
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Kami berkomitmen memberikan pengalaman booking terbaik untuk
+                liburan impian Anda
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="w-14 h-14 rounded-xl bg-teal-100 flex items-center justify-center mb-4">
+                  <svg
+                    className="w-7 h-7 text-teal-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Booking Aman
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Pembayaran terenkripsi dan data Anda terlindungi dengan
+                  standar keamanan tertinggi
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
+                  <svg
+                    className="w-7 h-7 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Harga Terbaik
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Jaminan harga terbaik dengan penawaran eksklusif dan diskon
+                  hingga 40%
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center mb-4">
+                  <svg
+                    className="w-7 h-7 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Support 24/7
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Tim customer service siap membantu Anda kapan saja, di mana
+                  saja
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="w-14 h-14 rounded-xl bg-orange-100 flex items-center justify-center mb-4">
+                  <svg
+                    className="w-7 h-7 text-orange-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Resort Terkurasi
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Setiap properti telah diverifikasi dan dikurasi untuk kualitas
+                  terbaik
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Popular Destinations Section */}
+        <div className="mt-24">
+          <div className="w-full max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-6 px-4">
+            <div className="flex justify-between items-end mb-8">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                  Destinasi Populer
+                </h2>
+                <p className="text-gray-600">
+                  Jelajahi lokasi favorit wisatawan di Bali
+                </p>
+              </div>
+              <Link
+                href="/properties"
+                className="hidden md:flex items-center gap-2 text-teal-600 hover:text-teal-700 font-medium"
+              >
+                Lihat Semua
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {[
+                {
+                  name: "Seminyak",
+                  image:
+                    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&q=80",
+                  count: "120+ Resort",
+                },
+                {
+                  name: "Ubud",
+                  image:
+                    "https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=400&q=80",
+                  count: "85+ Resort",
+                },
+                {
+                  name: "Uluwatu",
+                  image:
+                    "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=400&q=80",
+                  count: "65+ Resort",
+                },
+                {
+                  name: "Canggu",
+                  image:
+                    "https://images.unsplash.com/photo-1573790387438-4da905039392?auto=format&fit=crop&w=400&q=80",
+                  count: "90+ Resort",
+                },
+                {
+                  name: "Nusa Dua",
+                  image:
+                    "https://images.unsplash.com/photo-1559628233-100c798642d4?auto=format&fit=crop&w=400&q=80",
+                  count: "75+ Resort",
+                },
+                {
+                  name: "Sanur",
+                  image:
+                    "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80",
+                  count: "50+ Resort",
+                },
+              ].map((dest) => (
+                <Link
+                  key={dest.name}
+                  href={`/properties?location=${dest.name.toLowerCase()}`}
+                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden"
+                >
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                    style={{ backgroundImage: `url('${dest.image}')` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4 text-white">
+                    <h3 className="font-semibold text-lg">{dest.name}</h3>
+                    <p className="text-sm text-white/80">{dest.count}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials Section */}
+        <div className="mt-24 bg-gradient-to-br from-teal-50 to-cyan-50 py-20">
+          <div className="w-full max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-6 px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                Apa Kata Mereka?
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Pengalaman nyata dari wisatawan yang telah menikmati liburan
+                bersama Go-Stay
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                {
+                  name: "Sarah Wijaya",
+                  location: "Jakarta",
+                  avatar: "S",
+                  rating: 5,
+                  text: "Pengalaman booking yang sangat mudah! Resort yang kami dapat sangat sesuai dengan foto dan deskripsi. Pasti akan pakai Go-Stay lagi.",
+                },
+                {
+                  name: "Budi Santoso",
+                  location: "Surabaya",
+                  avatar: "B",
+                  rating: 5,
+                  text: "Harga yang ditawarkan sangat kompetitif. Customer service juga sangat responsif saat kami butuh bantuan. Recommended!",
+                },
+                {
+                  name: "Amanda Chen",
+                  location: "Bandung",
+                  avatar: "A",
+                  rating: 5,
+                  text: "Villa di Ubud yang kami booking benar-benar amazing! View sawah yang indah dan fasilitas lengkap. Terima kasih Go-Stay!",
+                },
+              ].map((testimonial, index) => (
+                <div key={index} className="bg-white rounded-2xl p-6 shadow-sm">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className="w-5 h-5 text-yellow-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    &quot;{testimonial.text}&quot;
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-semibold">
+                      {testimonial.avatar}
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        {testimonial.name}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {testimonial.location}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Call to Action Section - Modern Split Design */}
-        <div className="mt-20 relative overflow-hidden">
+        <div className="mt-24 relative overflow-hidden">
           <div className="grid lg:grid-cols-2 min-h-[500px]">
             {/* Left Side - Image */}
             <div className="relative h-64 lg:h-auto">
